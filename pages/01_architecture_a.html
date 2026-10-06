@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>معماری بومی LucilleAI (Rust + CUDA)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg: #090d16;
+      --card: #111726;
+      --border: #1e293b;
+      --primary: #38bdf8;
+      --secondary: #818cf8;
+      --accent: #f43f5e;
+      --green: #10b981;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'Vazirmatn', sans-serif; padding: 2rem; margin: 0; line-height: 1.8; }
+    .header { border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+    h1 { font-size: 2rem; color: #fff; margin-bottom: 0.5rem; }
+    .badge { background: rgba(56, 189, 248, 0.15); color: var(--primary); padding: 0.3rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: bold; border: 1px solid rgba(56, 189, 248, 0.3); }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+    .card h3 { color: var(--primary); font-size: 1.2rem; margin-bottom: 1rem; border-right: 3px solid var(--primary); padding-right: 0.6rem; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    th, td { padding: 0.8rem; border-bottom: 1px solid var(--border); text-align: right; font-size: 0.9rem; }
+    th { color: var(--muted); background: rgba(255,255,255,0.02); }
+    .pros { border-right: 4px solid var(--green); }
+    .cons { border-right: 4px solid var(--accent); }
+    ul { padding-right: 1.2rem; }
+    li { margin-bottom: 0.5rem; color: var(--muted); }
+    li strong { color: var(--text); }
+    .chart-box { height: 260px; position: relative; }
+
+    /* استایل اختصاصی واژه‌نامه فنی و دو سطحی */
+    .tech-item {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem;
+      margin-bottom: 1.2rem;
+    }
+    .tech-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.8rem;
+    }
+    .tech-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .tech-tag {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--primary);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    .dual-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .desc-simple {
+      background: rgba(16, 185, 129, 0.05);
+      border-right: 3px solid var(--green);
+      padding: 0.8rem;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      color: #cbd5e1;
+    }
+    .desc-deep {
+      background: rgba(56, 189, 248, 0.05);
+      border-right: 3px solid var(--primary);
+      padding: 0.8rem;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      color: #cbd5e1;
+    }
+    .desc-title {
+      font-weight: bold;
+      margin-bottom: 0.3rem;
+      display: block;
+    }
+    .desc-title.green { color: var(--green); }
+    .desc-title.cyan { color: var(--primary); }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <span class="badge">معماری اول — بالاترین امتیاز دانش‌بنیان</span>
+    <h1>موتور یکپارچه و بومی LucilleAI (In-Engine Architecture)</h1>
+    <p style="color: var(--muted);">طراحی هسته عمیق با Rust خالص، مدیریت سخت‌افزاری حافظه با Arena Allocator و پیاده‌سازی کرنل‌های سفارشی CUDA بدون وابستگی به ران‌تایم‌های سنگین.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>نگاه اجمالی به موتور بومی</h3>
+      <p style="color: var(--muted); font-size: 0.95rem; margin-bottom: 1rem;">
+        در این معماری تمام زنجیره محاسبات بدون وابستگی به کتابخانه‌های سطح بالا از پایه پیاده‌سازی شده است:
+      </p>
+      <ul>
+        <li><strong>هسته تنسور و گراف محاسباتی:</strong> دیفرانسیل‌گیری خودکار (Autograd Engine) اختصاصی در Rust.</li>
+        <li><strong>لایه شتاب‌دهنده سخت‌افزاری:</strong> کرنل‌های خام CUDA برای محاسبات موازی روی GPU.</li>
+        <li><strong>استخر حافظه سخت‌افزاری:</strong> تخصیص یکپارچه حافظه گرافیکی و سیستم برای حذف کامل تداخل Garbage Collector.</li>
+        <li><strong>پردازش متن بومی:</strong> توکنایزر اختصاصی متناسب با ساختار خط و واژگان زبان فارسی.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>توزیع حجم خطوط کد توسعه‌یافته (Lines of Code)</h3>
+      <div class="chart-box">
+        <canvas id="locChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- بخش تحلیل دو سطحی تکنولوژی‌ها: ساده + تخصصی -->
+  <div class="card" style="margin-bottom: 2rem;">
+    <h3>کالبدشکافی تکنولوژی‌های کلیدی (تحلیل دو سطحی: مفهومی + مهندسی عمیق)</h3>
+
+    <!-- 1. Rust Language -->
+    <div class="tech-item">
+      <div class="tech-header">
+        <span class="tech-title">۱. زبان برنامه‌نویسی سیستمی Rust</span>
+        <span class="tech-tag">Systems Programming Core</span>
+      </div>
+      <div class="dual-box">
+        <div class="desc-simple">
+          <span class="desc-title green">💡 توضیح ساده و کاربردی:</span>
+          مثل ساختن یک خودروی مسابقه‌ای با قطعات مکانیکی دقیق و بدون هیچ قطعه اضافه‌ است. در پایتون یک ناظر مرتب وسط حرکت چرخ‌ها تمیزکاری می‌کند (Garbage Collection) و لگ می‌اندازد، اما راست همه چیز را قبل از استارت موتور چک می‌کند تا خودرو با حداکثر سرعت و بدون ایستادن حرکت کند.
+        </div>
+        <div class="desc-deep">
+          <span class="desc-title cyan">⚙️ تحلیل تخصصی و مهندسی:</span>
+          استفاده از مدل مالکیت و قرض‌گیری (Ownership & Borrow Checker) بدون تحمیل سیستم Garbage Collector. حذف خطاهای دسترسی هم‌زمان (Data Race Free Concurrency)، استفاده از انتزاع‌های با هزینه صفر (Zero-Cost Abstractions) و کنترل کامل روی چینش بایت‌ها در حافظه کش CPU (Cache Locality).
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Custom CUDA Kernels -->
+    <div class="tech-item">
+      <div class="tech-header">
+        <span class="tech-title">۲. کرنل‌های بومی محاسبات ماتریسی CUDA</span>
+        <span class="tech-tag">Hardware Compute Kernel</span>
+      </div>
+      <div class="dual-box">
+        <div class="desc-simple">
+          <span class="desc-title green">💡 توضیح ساده و کاربردی:</span>
+          به جای استفاده از یک آچار همه‌کاره که برای هر پیچی کمی لق می‌زند، آچاری دقیقاً به اندازه پیچ‌های موتور هوش مصنوعی تراشیده‌ایم؛ دستورات ریاضی مستقیم به هزاران هسته کوچک کارت گرافیک داده می‌شود تا هم‌زمان حساب شوند.
+        </div>
+        <div class="desc-deep">
+          <span class="desc-title cyan">⚙️ تحلیل تخصصی و مهندسی:</span>
+          پیاده‌سازی دستی کرنل‌های Fused Attention و RoPE در قالب کدهای `.cu`. استفاده مستقیم از حافظه اشتراکی سریع داخل چیپ (Shared Memory / SRAM)، بهینه‌سازی ثبات‌ها (Registers) و همجوشی عملگرها (Operator Fusion) جهت کاهش جابه‌جایی داده بین تراشه و حافظه سراسری (HBM/VRAM).
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Memory Arena & Pinned Host Memory -->
+    <div class="tech-item">
+      <div class="tech-header">
+        <span class="tech-title">۳. تخصیص‌دهنده حافظه سفارشی (Memory Arena & Pinned RAM)</span>
+        <span class="tech-tag">Zero-Allocation Pipeline</span>
+      </div>
+      <div class="dual-box">
+        <div class="desc-simple">
+          <span class="desc-title green">💡 توضیح ساده و کاربردی:</span>
+          به جای اینکه هر بار هوش مصنوعی خواست فکر کند برود از سیستم‌عامل اجازه بگیرد و زمین بخرد (تخصیص رم)، اول کار یک انبار بزرگ و رزرو شده می‌گیرد و همان‌جا سریع وسایلش را جابه‌جا می‌کند؛ در نتیجه سیستم حتی یک هزارم ثانیه هم معطل خالی یا پر شدن رم نمی‌شود.
+        </div>
+        <div class="desc-deep">
+          <span class="desc-title cyan">⚙️ تحلیل تخصصی و مهندسی:</span>
+          استفاده از الگوی Arena Allocator به همراه `cudaHostAlloc` (Pinned Memory). این روش از Paging شدن حافظه توسط سیستم‌عامل جلوگیری کرده و ترانسفر داده بین Host و Device را از طریق کنترلر DMA (Direct Memory Access) با حداکثر پهنای باند گذرگاه PCIe ممکن می‌سازد؛ فراخوانی پرهزینه `cudaMalloc` حین استنتاج به صفر می‌رسد.
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Persian Unigram Tokenizer -->
+    <div class="tech-item">
+      <div class="tech-header">
+        <span class="tech-title">۴. توکنایزر اختصاصی زبان فارسی (Custom Unigram Engine)</span>
+        <span class="tech-tag">NLP Sub-word Segmentation</span>
+      </div>
+      <div class="dual-box">
+        <div class="desc-simple">
+          <span class="desc-title green">💡 توضیح ساده و کاربردی:</span>
+          مدل‌های خارجی کلمات فارسی را مثل حروف الفبای خردشده و جدا از هم می‌بینند (مثلاً «دانشگاه» را به ۴ تکه بی‌معنی خرد می‌کنند و گیج می‌شوند). این توکنایزر کلمات فارسی، نیم‌فاصله‌ها و صرف افعال را مثل یک شخص فارسی‌زبان از پیش می‌شناسد و حافظه را هدر نمی‌دهد.
+        </div>
+        <div class="desc-deep">
+          <span class="desc-title cyan">⚙️ تحلیل تخصصی و مهندسی:</span>
+          پیاده‌سازی ماژول نرمال‌سازی نویسه‌های یونیکد، نگاشت ارقام و نشانه‌ها، و اعمال مدل آماری Unigram Language Model اختصاصی. این بخش نسبت طول رشته توکن به کلمه (Token-to-Word Ratio) را برای زبان فارسی تا ۳۵٪ کاهش می‌دهد که مستقیماً به کاهش مصرف KV-Cache و افزایش سرعت تولید خروجی منتهی می‌شود.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- جدول مقایسه تصمیمات معماری -->
+  <div class="card" style="margin-bottom: 2rem;">
+    <h3>تحلیل چرایی انتخاب تکنولوژی‌ها در برابر رقبا (Trade-offs)</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>مولفه</th>
+          <th>تکنولوژی انتخابی</th>
+          <th>گزینه رد شده</th>
+          <th>علت رد کردن گزینه جایگزین (RATIONALE)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>زبان موتور پردازشی</strong></td>
+          <td><strong>Rust</strong></td>
+          <td>Python (C-API)</td>
+          <td>سربار بالای مفسر، قفل GIL، نوسانات شدید تأخیر (Jitter) ناشی از رفتارهای GC در جریان ترافیک ریل‌تایم صوتی.</td>
+        </tr>
+        <tr>
+          <td><strong>هسته‌های شتاب‌‌دهنده</strong></td>
+          <td><strong>CUDA Kernels بومی</strong></td>
+          <td>PyTorch LibTorch / ONNX</td>
+          <td>کاهش وزن نهایی باینری از چندین گیگابایت به مگابایت، دسترسی کامل به فیوژن عملگرها (Operator Fusion) و بهینه‌سازی ثبات‌ها.</td>
+        </tr>
+        <tr>
+          <td><strong>تخصیص حافظه گرافیکی</strong></td>
+          <td><strong>Ring Buffer & Arena</strong></td>
+          <td>استاندارد `cudaMalloc`</td>
+          <td>فراخوانی `cudaMalloc` در حین اجرای مدل باعث Synchronization ناخواسته CPU-GPU و فریزهای ۵ تا ۲۰ میلی‌ثانیه‌ای می‌شود.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid">
+    <div class="card pros">
+      <h3 style="color: var(--green); border-color: var(--green);">مزایای فنی و ارزش دانش‌بنیان</h3>
+      <ul>
+        <li><strong>تاخیر پاسخ‌دهی استثنایی:</strong> زمان پردازش کمتر از ۲۰۰ میلی‌ثانیه برای استنتاج بلادرنگ.</li>
+        <li><strong>ارزش مالکیت فکری (IP):</strong> اثبات عدم استفاده از رپرهای آماده و داشتن عمق طراحی در سطح کرنل و الگوریتم‌های Autograd.</li>
+        <li><strong>مصرف بهینه منابع:</strong> امکان سرویس‌دهی مدل روی کارت‌های رده مصرف‌کننده (Consumer GPUs) بدون پر شدن ناگهانی VRAM.</li>
+      </ul>
+    </div>
+
+    <div class="card cons">
+      <h3 style="color: var(--accent); border-color: var(--accent);">چالش‌های پیاده‌سازی و نقاط ضعف</h3>
+      <ul>
+        <li><strong>هزینه بالای تحقیق و توسعه (R&D Cost):</strong> اضافه کردن هر قابلیت یا لایه جدید نیازمند پیاده‌سازی کرنل‌های ریاضی دوفازی (Forward/Backward) است.</li>
+        <li><strong>زمان ورود به بازار طولانی‌تر:</strong> توسعه موتور بومی نسبت به استفاده از مدل‌های آماده به زمان بسیار بیشتری نیاز دارد.</li>
+        <li><strong>پیچیدگی دیباگ:</strong> خطاهای مربوط به عدم تطابق مرزهای حافظه یا مسابقه داده‌ها در کدهای غیرامن (Unsafe Rust / CUDA) نیازمند ابزارهای تخصصی مثل `cuda-memcheck` است.</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    const ctx = document.getElementById('locChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Rust (منطق و موتور)', 'CUDA (کرنل‌های محاسباتی)', 'اسکریپت‌ها و ساختار'],
+        datasets: [{
+          data: [73061, 4421, 2555],
+          backgroundColor: ['#38bdf8', '#818cf8', '#1e293b'],
+          borderColor: '#111726',
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom', labels: { color: '#94a3b8', font: { family: 'Vazirmatn' } } }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

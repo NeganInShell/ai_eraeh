@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>معماری مستقل ماژولار (Microservices Pipeline)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg: #090d16;
+      --card: #111726;
+      --border: #1e293b;
+      --primary: #818cf8;
+      --secondary: #38bdf8;
+      --accent: #f43f5e;
+      --green: #10b981;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'Vazirmatn', sans-serif; padding: 2rem; margin: 0; line-height: 1.8; }
+    .header { border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+    h1 { font-size: 2rem; color: #fff; margin-bottom: 0.5rem; }
+    .badge { background: rgba(129, 140, 248, 0.15); color: var(--primary); padding: 0.3rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: bold; border: 1px solid rgba(129, 140, 248, 0.3); }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+    .card h3 { color: var(--primary); font-size: 1.2rem; margin-bottom: 1rem; border-right: 3px solid var(--primary); padding-right: 0.6rem; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    th, td { padding: 0.8rem; border-bottom: 1px solid var(--border); text-align: right; font-size: 0.9rem; }
+    th { color: var(--muted); background: rgba(255,255,255,0.02); }
+    .pros { border-right: 4px solid var(--green); }
+    .cons { border-right: 4px solid var(--accent); }
+    ul { padding-right: 1.2rem; }
+    li { margin-bottom: 0.5rem; color: var(--muted); }
+    li strong { color: var(--text); }
+    .chart-box { height: 260px; position: relative; }
+
+    /* استایل اختصاصی واژه‌نامه فنی و دو سطحی */
+    .tech-item {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem;
+      margin-bottom: 1.2rem;
+    }
+    .tech-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.8rem;
+    }
+    .tech-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .tech-tag {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--secondary);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    .dual-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .desc-simple {
+      background: rgba(16, 185, 129, 0.05);
+      border-right: 3px solid var(--green);
+      padding: 0.8rem;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      color: #cbd5e1;
+    }
+    .desc-deep {
+      background: rgba(129, 140, 248, 0.05);
+      border-right: 3px solid var(--primary);
+      padding: 0.8rem;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      color: #cbd5e1;
+    }
+    .desc-title {
+      font-weight: bold;
+      margin-bottom: 0.3rem;
+      display: block;
+    }
+    .desc-title.green { color: var(--green); }
+    .desc-title.purple { color: var(--primary); }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <span class="badge">معماری دوم — تاب‌آوری و مقیاس‌پذیری اینترپرایز</span>
+    <h1>معماری مستقل ماژولار (Distributed Microservices Architecture)</h1>
+    <p style="color: var(--muted);">جداسازی کامل چرخه‌های پردازش صوت، تصویر و متن در سرویس‌های ایزوله با پروتکل ارتباطی باینری، مدیریت مستقل کارت‌های گرافیک و امکان توسعه موازی تیم‌ها.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>نگاه اجمالی به توپولوژی ماژولار</h3>
+      <p style="color: var(--muted); font-size: 0.95rem; margin-bottom: 1rem;">
+        در این ساختار، به جای اجرای همه مدل‌ها درون یک پروسس واحد، هسته هوش مصنوعی به سرویس‌های تخصصی شکسته می‌شود:
+      </p>
+      <ul>
+        <li><strong>سرویس صوتی (Audio Worker):</strong> تبدیل گفتار ورودی به متن (STT) و تولید جریان صدا (TTS).</li>
+        <li><strong>سرویس بینایی ماشین (Vision Worker):</strong> دریافت فریم‌های ویدیو، برش پچ‌ها و استخراج بردار ویژگی.</li>
+        <li><strong>سرویس استدلال و زبان (LLM Brain):</strong> هسته مرکزی لوسیل جهت درک مفهوم و تصمیم‌گیری.</li>
+        <li><strong>درگاه تبادل و هماهنگ‌ساز (Orchestrator Gateway):</strong> برقراری ارتباط بلادرنگ با کلاینت و توازن بار.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>سهم زمان مصرف‌شده در پایپ‌لاین ماژولار (Latency Breakdown)</h3>
+      <div class="chart-box">
+        <canvas id="latencyShareChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- بخش تحلیل دو سطحی تکنولوژی‌ها: ساده + تخصصی -->
+  <div class="card" style="margin-bottom: 2rem;">
+    <h3>کالبدشکافی تکنولوژی‌های کلیدی (تحلیل دو سطحی: مفهومی + مهندسی عمیق)</h3>
+
+    <!-- 1. gRPC -->
+    <div class="tech-item">
+      <div class="tech-header">
+        <span class="tech-title">۱. پروتکل ارتباطی gRPC و Protocol Buffers</span>
+        <span class="tech-tag">Inter-Process Transport</span>
+      </div>
+      <div class="dual-box">
+        <div class="desc-simple">
+          <span class="desc-title green">💡 توضیح ساده و کاربردی:</span>
+          به جای ارسال پیام‌های متنی سنگین و کند مثل JSON (شبیه نامه پستی کاغذی)، کامپوننت‌ها به یک زبان فشرده و باینری مثل کد مورس فوق‌سریع با هم حرف می‌زنند که نیاز به باز و بسته کردن مداوم ندارد و به صورت مستقیم لوله آب روان (Stream) داده‌ها ردوبدل می‌شود.
+        </div>
+        <div class="desc-deep">
+          <span class="desc-title purple">⚙️ تحلیل تخصصی و مهندسی:</span>
+          یک فریم‌ورک RPC متن‌باز که روی <strong>HTTP/2</strong> اجرا می‌شود. با استفاده از <strong>Protocol Buffers</strong>، داده‌ها به صورت باینری و Strongly-typed سریالایز می‌شوند. ویژگی Multiplexing در HTTP/2 اجازه می‌دهد صدها درخواست هم‌زمان صوتی بدون قفل شدن سر خط (HOL Blocking) روی یک کانکشن TCP تبادل شوند.
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Shared Memory IPC -->
+    <div class="tech-item">
+      <div class="tech-header">
+        <span class="tech-title">۲. حافظه اشتراکی سیستم‌عامل (Shared Memory IPC)</span>
+        <span class="tech-tag">Low-Latency Data Bus</span>
+      </div>
+      <div class="dual-box">
+        <div class="desc-simple">
+          <span class="desc-title green">💡 توضیح ساده و کاربردی:</span>
+          به جای اینکه عکس‌های سنگین دوربین بین برنامه‌ها دست‌به‌دست و هی کپی بشن، یک تخته‌سیاه مشترک در رم کامپیوتر می‌گذاریم؛ سرویس دوربین تصویر رو می‌نویسه رو تخته و سرویس هوش مصنوعی مستقیم از رو همون تخته می‌خونتش بدون هیچ معطلی!
+        </div>
+        <div class="desc-deep">
+          <span class="desc-title purple">⚙️ تحلیل تخصصی و مهندسی:</span>
+          استفاده از مکانیزم‌های <code>shm_open</code> و <code>mmap</code> در استاندارد POSIX لینوکس. این کار با نگاشت یک بلوک فیزیکی RAM در فضای آدرس مجازی دو پردازش مجزا، هزینه کپی حافظه در سطح کرنل (Context Switching & Kernel Buffer Copy) را به صفر می‌رساند (Zero-Copy Inter-Process Communication).
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Envoy / NGINX Load Balancer -->
+    <div class="tech-item">
+      <div class="tech-header">
+        <span class="tech-title">۳. پروکسی معکوس و متوازن‌‌کننده بار (Envoy Proxy / NGINX)</span>
+        <span class="tech-tag">Traffic Orchestration</span>
+      </div>
+      <div class="dual-box">
+        <div class="desc-simple">
+          <span class="desc-title green">💡 توضیح ساده و کاربردی:</span>
+          شبیه یک پلیس راهنمایی و رانندگی هوشمند در ورودی سرور که جریان خودروها (صدا و ویدیو کاربران) را می‌بیند و هر جریان را به خلوت‌ترین اتوبان یا کارشناس خالی هدایت می‌کند تا هیچ کس پشت ترافیک معطل نشود.
+        </div>
+        <div class="desc-deep">
+          <span class="desc-title purple">⚙️ تحلیل تخصصی و مهندسی:</span>
+          پروکسی L7 با کارایی بالا که به صورت بومی پروتکل gRPC و بازرسی فریم‌های HTTP/2 را درک می‌کند. وظیفه Health Checking سلامت ورکرها، توزیع بار به روش Round Robin یا Least Request، و بازیابی خودکار در صورت بروز خطای <code>UNAVAILABLE</code> نودها را بر عهده دارد.
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Dynamic GPU Scheduling -->
+    <div class="tech-item">
+      <div class="tech-header">
+        <span class="tech-title">۴. زمان‌بندی و ایزولاسیون پردازنده‌های گرافیکی (GPU Isolation)</span>
+        <span class="tech-tag">Hardware Orchestration</span>
+      </div>
+      <div class="dual-box">
+        <div class="desc-simple">
+          <span class="desc-title green">💡 توضیح ساده و کاربردی:</span>
+          به جای اینکه همه مدل‌ها روی یک کارت گرافیک دعوا کنند و اگر یکی پر شد کل سیستم خاموش بشه، هر کارت گرافیک وظیفه مشخصی داره: کارت اول فقط می‌شنوه و حرف می‌زنه، کارت دوم فقط فکر می‌کنه!
+        </div>
+        <div class="desc-deep">
+          <span class="desc-title purple">⚙️ تحلیل تخصصی و مهندسی:</span>
+          جداسازی سخت‌افزاری با تخصیص متغیر محیطی <code>CUDA_VISIBLE_DEVICES</code> به هر کانتینر یا پردازش. استفاده از استراتژی Multi-Instance GPU (MIG) یا MPS (Multi-Process Service) در کارت‌های انویدیا برای تضمین پهنای باند حافظه اختصاصی و عدم تداخل سهم‌های Compute Context.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- جدول مقایسه تصمیمات معماری -->
+  <div class="card" style="margin-bottom: 2rem;">
+    <h3>تحلیل چرایی انتخاب تکنولوژی‌ها در برابر گزینه‌های دیگر (Trade-offs)</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>لایه معماری</th>
+          <th>تکنولوژی منتخب</th>
+          <th>گزینه رد شده</th>
+          <th>دلیل رد گزینه جایگزین (RATIONALE)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>پروتکل تبادل استریم</strong></td>
+          <td><strong>gRPC Streams</strong></td>
+          <td>REST / JSON API</td>
+          <td>کدگذاری و دیکد رشته‌های بزرگ برداری در JSON باعث کندی شدید، قفل پردازنده و افزایش تأخیر تا ۴ برابر می‌شود.</td>
+        </tr>
+        <tr>
+          <td><strong>ارتباطات هم‌مکانی (Local IPC)</strong></td>
+          <td><strong>Shared Memory (shm)</strong></td>
+          <td>TCP Sockets لوکال</td>
+          <td>انتقال بافرهای ویدیویی یا فریم‌های غیرفشرده روی سوکت محلی نیاز به کپی‌های مکرر بین User-space و Kernel-space دارد.</td>
+        </tr>
+        <tr>
+          <td><strong>توزیع بار پردازشی</strong></td>
+          <td><strong>GPU Scheduling مستقل</strong></td>
+          <td>Unified Monolith Process</td>
+          <td>جلوگیری از پدیده Out-of-Memory سراسری؛ در صورت کرش ماژول ویژن، سشن چت متنی و صوتی کلاینت بدون وقفه ادامه پیدا می‌کند.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid">
+    <div class="card pros">
+      <h3 style="color: var(--green); border-color: var(--green);">مزایای فنی و عملیاتی</h3>
+      <ul>
+        <li><strong>جداسازی چرخه حیات (Fault Isolation):</strong> فریز یا کرش یک سرویس (مثلاً نشت حافظه در پردازش تصویر) کل سیستم هوش مصنوعی را زمین نمی‌زند.</li>
+        <li><strong>مقیاس‌پذیری افقی ناهمگن:</strong> اگر درخواست‌های صوتی ۵ برابر تصاویر باشند، فقط تعداد نودهای کانتینر STT افزایش می‌یابد و هزینه زیرساخت هدر نمی‌‌رود.</li>
+        <li><strong>توسعه موازی تیم‌ها:</strong> تیم هوش مصنوعی صوتی بدون ایجاد تداخل در هسته راست لوسیل می‌تواند مدل خود را به‌روزرسانی کند.</li>
+      </ul>
+    </div>
+
+    <div class="card cons">
+      <h3 style="color: var(--accent); border-color: var(--accent);">چالش‌های پیاده‌سازی و نقاط ضعف</h3>
+      <ul>
+        <li><strong>سربار تأخیر بین‌شبکه‌ای (Network Hop Overhead):</strong> وجود چند پرش شبکه و سریالایز/دیسریالایز پکت‌ها تأخیر را نسبت به هسته بومی بین ۱۰۰ تا ۲۰۰ میلی‌ثانیه افزایش می‌دهد.</li>
+        <li><strong>پیچیدگی استقرار و مانیتورینگ:</strong> نیاز به راه‌اندازی زیرساخت‌های مانیتورینگ توزیع‌شده مثل OpenTelemetry و Jaeger برای ردیابی خطاها.</li>
+        <li><strong>کاهش جزئی امتیاز دانش‌‌بنیان:</strong> ارزیاب ممکن است معماری را یک تجمیع چند ابزار استاندارد اینترپرایز تلقی کند مگر اینکه ارکستریتور اختصاصی نوشته شود.</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    const ctx = document.getElementById('latencyShareChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['استریم صدا (STT)', 'سریالایز و ارسال gRPC', 'استنتاج مغز متن (LLM)', 'پروجکشن و انکود تصویر', 'سنتز صدا (TTS)'],
+        datasets: [{
+          label: 'سهم تأخیر (میلی‌‌ثانیه)',
+          data: [120, 45, 140, 80, 95],
+          backgroundColor: [
+            'rgba(129, 140, 248, 0.8)',
+            'rgba(244, 63, 94, 0.8)',
+            'rgba(56, 189, 248, 0.8)',
+            'rgba(234, 179, 8, 0.8)',
+            'rgba(16, 185, 129, 0.8)'
+          ],
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { family: 'Vazirmatn' } } },
+          x: { grid: { display: false }, ticks: { color: '#f1f5f9', font: { family: 'Vazirmatn', size: 10 } } }
+        },
+        plugins: {
+          legend: { display: false }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

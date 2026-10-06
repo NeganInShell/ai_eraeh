@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>معماری ترکیبی با مدل‌های آماده و Hybrid RAG سازمانی</title>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg: #090d16;
+      --card: #111726;
+      --border: #1e293b;
+      --primary: #f43f5e;
+      --secondary: #38bdf8;
+      --accent: #818cf8;
+      --green: #10b981;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'Vazirmatn', sans-serif; padding: 2rem; margin: 0; line-height: 1.8; }
+    .header { border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+    h1 { font-size: 2rem; color: #fff; margin-bottom: 0.5rem; }
+    .badge { background: rgba(244, 63, 94, 0.15); color: var(--primary); padding: 0.3rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: bold; border: 1px solid rgba(244, 63, 94, 0.3); }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+    .card h3 { color: var(--primary); font-size: 1.2rem; margin-bottom: 1rem; border-right: 3px solid var(--primary); padding-right: 0.6rem; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    th, td { padding: 0.8rem; border-bottom: 1px solid var(--border); text-align: right; font-size: 0.9rem; }
+    th { color: var(--muted); background: rgba(255,255,255,0.02); }
+    .pros { border-right: 4px solid var(--green); }
+    .cons { border-right: 4px solid var(--primary); }
+    ul { padding-right: 1.2rem; }
+    li { margin-bottom: 0.5rem; color: var(--muted); }
+    li strong { color: var(--text); }
+    .chart-box { height: 260px; position: relative; }
+
+    /* استایل دو سطحی */
+    .tech-item {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem;
+      margin-bottom: 1.2rem;
+    }
+    .tech-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.8rem;
+    }
+    .tech-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .tech-tag {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      background: rgba(244, 63, 94, 0.15);
+      color: var(--primary);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+    }
+    .dual-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .desc-simple {
+      background: rgba(16, 185, 129, 0.05);
+      border-right: 3px solid var(--green);
+      padding: 0.8rem;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      color: #cbd5e1;
+    }
+    .desc-deep {
+      background: rgba(244, 63, 94, 0.05);
+      border-right: 3px solid var(--primary);
+      padding: 0.8rem;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      color: #cbd5e1;
+    }
+    .desc-title {
+      font-weight: bold;
+      margin-bottom: 0.3rem;
+      display: block;
+    }
+    .desc-title.green { color: var(--green); }
+    .desc-title.red { color: var(--primary); }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <span class="badge">معماری سوم — ورود سریع به بازار و حذف توهم (Zero Hallucination)</span>
+    <h1>معماری ترکیبی مدل‌های آماده با پایگاه دانش سازمانی (Hybrid RAG)</h1>
+    <p style="color: var(--muted);">ترکیب مدل‌های بهینه‌شده پیش‌آموزش‌دیده (Pretrained Quantized Models) با موتور بازیابی اسناد دوزبانه (Hybrid Search)، مناسب پروژه‌های تجاری فوری با امنیت داده‌های سازمانی.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>نگاه اجمالی به پایپ‌لاین Hybrid RAG</h3>
+      <p style="color: var(--muted); font-size: 0.95rem; margin-bottom: 1rem;">
+        در این سناریو، مدل زبانی به جای تکیه بر اطلاعات قدیمی ذخیره‌شده در وزن‌ها، ابتدا اسناد معتبر را درلحظه جستجو و مطالعه می‌کند:
+      </p>
+      <ul>
+        <li><strong>جستجوی معنایی متراکم (Dense Retrieval):</strong> تبدیل پرسش کاربر به بردار عددی و کشف اسناد مشابه معنایی.</li>
+        <li><strong>جستجوی دقیق واژگانی (Sparse BM25):</strong> تطبیق کلمه به کلمه برای شناسایی کد ملی، شماره بخشنامه‌ها و اسامی خاص.</li>
+        <li><strong>بازتنظیم رتبه (Re-ranking):</strong> رتبه‌بندی مجدد پاراگراف‌ها با مدل مقایسه‌گر برای ارسال خالص‌ترین اطلاعات به پرامپت.</li>
+        <li><strong>پاسخ‌گویی مستند:</strong> تولید خروجی همراه با رفرنس و سورس دقیق پاراگراف‌ها بدون ریسک دروغ‌گویی مدل.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>مقایسه دقت بازیابی اطلاعات (Retrieval Accuracy & MRR)</h3>
+      <div class="chart-box">
+        <canvas id="ragAccuracyChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- بخش واژه‌نامه فنی دو سطحی -->
+  <div class="card" style="margin-bottom: 2rem;">
+    <h3>کالبدشکافی تکنولوژی‌های کلیدی (تحلیل دو سطحی: مفهومی + مهندسی عمیق)</h3>
+
+    <!-- 1. Qdrant Vector DB -->
+    <div class="tech-item">
+      <div class="tech-header">
+        <span class="tech-title">۱. پایگاه داده برداری Qdrant</span>
+        <span class="tech-tag">Vector Database Engine</span>
+      </div>
+      <div class="dual-box">
+        <div class="desc-simple">
+          <span class="desc-title green">💡 توضیح ساده و کاربردی:</span>
+          مثل یک کتابدار فوق‌العاده باهوش که کل کتاب‌های شرکت را خوانده است. اگر بپرسی «حساب بانکی شرکت کجاست؟»، حتی اگر این کلمات در کتاب نباشد، می‌فهمد منظور شما امور مالی است و دقیقاً همان صفحه را باز می‌کند تحویل می‌دهد!
+        </div>
+        <div class="desc-deep">
+          <span class="desc-title red">⚙️ تحلیل تخصصی و مهندسی:</span>
+          یک دیتابیس وکتور توسعه‌یافته با <strong>Rust</strong> با پشتیبانی از شاخص‌بندی HNSW (Hierarchical Navigable Small World). قابلیت فیلترینگ سخت‌افزاری متادیتا در زمان Payload Filtering و مصرف بسیار کم رم در مقایسه با Milvus و Pinecone با پشتیبانی بومی از Quantization اسکالر بردارها.
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. BM25 Sparse Search -->
+    <div class="tech-item">
+      <div class="tech-header">
+        <span class="tech-title">۲. موتور جستجوی کلمات کلیدی BM25</span>
+        <span class="tech-tag">Lexical / Sparse Search</span>
+      </div>
+      <div class="dual-box">
+        <div class="desc-simple">
+          <span class="desc-title green">💡 توضیح ساده و کاربردی:</span>
+          یک جستجوگر عین‌به‌عین؛ وقتی مدیرعامل دنبال «قرارداد شماره ۹۰۴۸/الف» می‌گردد، مفهوم معنایی به درد نمی‌خورد! BM25 دقیقاً همان کد و نام را با موچین از دل هزاران صفحه اسکن‌شده بیرون می‌کشد.
+        </div>
+        <div class="desc-deep">
+          <span class="desc-title red">⚙️ تحلیل تخصصی و مهندسی:</span>
+          الگوریتم احتمالاتی رتبه‌بندی مبتنی بر فرکانس کلمات (TF-IDF بهبودیافته) با در نظر گرفتن اشباع واژه‌ها در چانک‌ها و طول سند. این الگوریتم ضعف بزرگ مدل‌های امبدینگ در انطباق کدهای رهگیری، اسامی ناآشنا و کلیدواژه‌های اختصاصی سازمانی را خنثی می‌کند.
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Cross-Encoder Reranker -->
+    <div class="tech-item">
+      <div class="tech-header">
+        <span class="tech-title">۳. مدل بازتنظیم رتبه (Cross-Encoder Re-ranker)</span>
+        <span class="tech-tag">Context Refinement</span>
+      </div>
+      <div class="dual-box">
+        <div class="desc-simple">
+          <span class="desc-title green">💡 توضیح ساده و کاربردی:</span>
+          مثل ممیز نهایی اسناد؛ بعد از اینکه جستجوگر ۲۰ سند محتمل را پیدا کرد، این ممیز همه را با ذره‌بین بازخوانی می‌کند و ۳ پاراگراف طلایی که دقیقاً جواب سؤال توش هست را بالای دست می‌گذارد تا هوش مصنوعی گیج نشود.
+        </div>
+        <div class="desc-deep">
+          <span class="desc-title red">⚙️ تحلیل تخصصی و مهندسی:</span>
+          برخلاف Bi-Encoderها که سؤال و سند را جداگانه برداری می‌کنند، مدل Cross-Encoder جفت `(Query, Passage)` را هم‌زمان به لایه‌های Full Self-Attention ترنسفرمر می‌دهد تا تعاملات متقابل تک‌تک کلمات سنجیده شده و یک امتیاز شباهت دقیق بین ۰ تا ۱ تولید شود.
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Semantic Chunking Strategy -->
+    <div class="tech-item">
+      <div class="tech-header">
+        <span class="tech-title">۴. چانک‌بندی هوشمند مبتنی بر ساختار سند (Semantic Chunking)</span>
+        <span class="tech-tag">Data Ingestion Pipeline</span>
+      </div>
+      <div class="dual-box">
+        <div class="desc-simple">
+          <span class="desc-title green">💡 توضیح ساده و کاربردی:</span>
+          به جای بریدن متن اسناد با قیچی کورکورانه (مثلاً ۵۰۰ کلمه ۵۰۰ کلمه که ممکنه وسط یک جمله مهم قطع بشه)، سند را بر اساس سرفصل‌ها، پاراگراف‌های معنادار و جدول‌ها خرد می‌کنیم تا مفهوم ناقص نماند.
+        </div>
+        <div class="desc-deep">
+          <span class="desc-title red">⚙️ تحلیل تخصصی و مهندسی:</span>
+          شکستن اسناد بر اساس افت ناگهانی کوسینوس شباهت برداری جملات متوالی (Cosine Distance Spikes) و حفظ ساختار درختی جداول Markdown و هدینگ‌ها همراه با Sliding Window Overlap (مثلاً ۱۰٪ تداخل) برای حفظ پیوستگی ارجاعات ضمیرها.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- جدول مقایسه تصمیمات معماری -->
+  <div class="card" style="margin-bottom: 2rem;">
+    <h3>تحلیل چرایی انتخاب تکنولوژی‌ها در برابر گزینه‌های دیگر (Trade-offs)</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>مولفه</th>
+          <th>تکنولوژی منتخب</th>
+          <th>گزینه رد شده</th>
+          <th>علت رد کردن گزینه جایگزین (RATIONALE)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>دیتابیس برداری</strong></td>
+          <td><strong>Qdrant (Rust-based)</strong></td>
+          <td>ChromaDB / Pinecone</td>
+          <td>کروما بر پایه اسکریپت پایتون بوده و در اسکیل بالای سازمانی رم منفجر می‌کند؛ پاین‌کون هم کلود بوده و امکان سلف‌هاست روی سرور محرمانه شرکت را ندارد.</td>
+        </tr>
+        <tr>
+          <td><strong>استراتژی سرچ اسناد</strong></td>
+          <td><strong>Hybrid (Dense + Sparse)</strong></td>
+          <td>فقط Vector Search</td>
+          <td>سرچ صرفاً وکتوری در یافتن شماره پرونده‌ها، پلاک‌ها و اصطلاحات خاص حقوقی/سازمانی خطای بازخوانی (Recall Drop) وحشتناکی دارد.</td>
+        </tr>
+        <tr>
+          <td><strong>فریم‌ورک سرو مدل</strong></td>
+          <td><strong>vLLM / llama.cpp (GGUF)</strong></td>
+          <td>HuggingFace Transformers پیش‌فرض</td>
+          <td>مدل خام هاگینگ‌فیس سرعت اینفرنس توکن بر ثانیه پایینی دارد و مصرف VRAM آن به دلیل عدم پشتیبانی از PagedAttention دو برابر است.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid">
+    <div class="card pros">
+      <h3 style="color: var(--green); border-color: var(--green);">مزایای فنی و عملیاتی</h3>
+      <ul>
+        <li><strong>سرعت ورود به بازار (TTM فوق‌سریع):</strong> قابلیت استقرار آزمایشی ظرف کمتر از ۳ هفته با اتکا به مدل‌های متن‌باز بهینه‌شده.</li>
+        <li><strong>حذف توهم مدل (Zero Hallucination):</strong> الزام مدل به ارجاع به رفرنس و عدم صدور پاسخ در صورت نبود داده در پایگاه دانش.</li>
+        <li><strong>به‌روزرسانی لحظه‌ای دانش:</strong> بدون نیاز به فاین‌تیون چندروزه و هزینه‌بر؛ فقط با آپلود PDF جدید در پایگاه وکتور، دانش سیستم به‌روز می‌شود.</li>
+      </ul>
+    </div>
+
+    <div class="card cons">
+      <h3 style="color: var(--primary); border-color: var(--primary);">چالش‌های پیاده‌سازی و نقاط ضعف</h3>
+      <ul>
+        <li><strong>امتیاز دانش‌بنیان پایین‌تر:</strong> به دلیل اتکا به مدل‌های پایه‌ای خارجی، کسب رتبه ۱ دانش‌بنیان سخت‌تر است مگر اینکه روی پایپ‌لاین هیبریدی بومی مانور داده شود.</li>
+        <li><strong>تاخیر زنجیره‌ای (High Latency):</strong> زمان چرخه سرچ وکتوری + ریرنک + پرامپت بزرگ باعث می‌شود تاخیر پاسخ به بالای ۱.۵ ثانیه برسد (نامناسب برای مکالمه صوتی زنده).</li>
+        <li><strong>پیچیدگی استخراج اسناد فارسی:</strong> فرمت‌های PDF فارسی و جداول نیازمند ابزارهای OCR و پارسرهای بسیار دقیق برای تمیزسازی متون هستند.</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    const ctx = document.getElementById('ragAccuracyChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'radar',
+      data: {
+        labels: ['شناسایی اصطلاحات خاص', 'درک مفاهیم انتزاعی', 'سرعت بازیابی', 'مقاومت در برابر اسناد نویزی', 'پوشش رفرنس‌های حقوقی'],
+        datasets: [
+          {
+            label: 'Hybrid RAG (Dense + BM25 + Rerank)',
+            data: [96, 92, 78, 94, 98],
+            borderColor: '#f43f5e',
+            backgroundColor: 'rgba(244, 63, 94, 0.25)',
+            borderWidth: 2
+          },
+          {
+            label: 'Dense Vector Only (فقط وکتور)',
+            data: [60, 90, 88, 65, 55],
+            borderColor: '#38bdf8',
+            backgroundColor: 'rgba(56, 189, 248, 0.15)',
+            borderWidth: 1.5
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          r: {
+            angleLines: { color: '#1e293b' },
+            grid: { color: '#1e293b' },
+            pointLabels: { color: '#94a3b8', font: { family: 'Vazirmatn', size: 10 } },
+            ticks: { display: false, max: 100 }
+          }
+        },
+        plugins: {
+          legend: { position: 'bottom', labels: { color: '#94a3b8', font: { family: 'Vazirmatn' } } }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

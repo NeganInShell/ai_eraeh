@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>خط لوله بلادرنگ صوت (Audio Engine Pipeline)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg: #090d16;
+      --card: #111726;
+      --border: #1e293b;
+      --primary: #38bdf8;
+      --secondary: #818cf8;
+      --accent: #f43f5e;
+      --green: #10b981;
+      --orange: #f59e0b;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'Vazirmatn', sans-serif; padding: 2rem; margin: 0; line-height: 1.8; }
+    .header { border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+    h1 { font-size: 2rem; color: #fff; margin-bottom: 0.5rem; }
+    .badge { background: rgba(245, 158, 11, 0.15); color: var(--orange); padding: 0.3rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: bold; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+    .card h3 { color: var(--orange); font-size: 1.2rem; margin-bottom: 1rem; border-right: 3px solid var(--orange); padding-right: 0.6rem; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    th, td { padding: 0.8rem; border-bottom: 1px solid var(--border); text-align: right; font-size: 0.9rem; }
+    th { color: var(--muted); background: rgba(255,255,255,0.02); }
+    .pros { border-right: 4px solid var(--green); }
+    .cons { border-right: 4px solid var(--accent); }
+    ul { padding-right: 1.2rem; }
+    li { margin-bottom: 0.5rem; color: var(--muted); }
+    li strong { color: var(--text); }
+    .chart-box { height: 260px; position: relative; }
+
+    /* استایل واژه‌نامه دو سطحی */
+    .tech-item {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem;
+      margin-bottom: 1.2rem;
+    }
+    .tech-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.8rem;
+    }
+    .tech-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .tech-tag {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--orange);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    .dual-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .desc-simple {
+      background: rgba(16, 185, 129, 0.05);
+      border-right: 3px solid var(--green);
+      padding: 0.8rem;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      color: #cbd5e1;
+    }
+    .desc-deep {
+      background: rgba(245, 158, 11, 0.05);
+      border-right: 3px solid var(--orange);
+      padding: 0.8rem;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      color: #cbd5e1;
+    }
+    .desc-title {
+      font-weight: bold;
+      margin-bottom: 0.3rem;
+      display: block;
+    }
+    .desc-title.green { color: var(--green); }
+    .desc-title.orange { color: var(--orange); }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <span class="badge">ماژول ادراکی صوتی — تعامل بلادرنگ و بدون وقفه</span>
+    <h1>خط لوله پردازش بلادرنگ صوت (Streaming Audio Engine)</h1>
+    <p style="color: var(--muted);">معماری انتها‌به‌انتها برای تبدیل امواج صوتی به متن، هدایت معنایی به هسته زبانی لوسیل و سنتز فوق‌سریع گفتار با تأخیر زیر ۲۵۰ میلی‌ثانیه بر بستر Rust و SIMD.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>نگاه اجمالی به چرخه استریم صوتی</h3>
+      <p style="color: var(--muted); font-size: 0.95rem; margin-bottom: 1rem;">
+        در این پایپ‌لاین، برخلاف سیستم‌های قدیمی ضبط فایل و ارسال به سرور، صدا به صورت قطعات پیوسته ۵۰ میلی‌ثانیه‌ای پردازش می‌شود:
+      </p>
+      <ul>
+        <li><strong>تشخیص فعالیت صوتی (VAD):</strong> شناسایی آنی مکث یا شروع صحبت کاربر و قطع صحبت ربات (Interruption).</li>
+        <li><strong>استخراج طیف صوتی (Log-Mel DSP):</strong> تبدیل موج خام صوتی به ماتریس فرکانسی با شتاب‌دهنده برداری SIMD.</li>
+        <li><strong>موتور شنیدن (Streaming STT):</strong> دیکد هم‌زمان کلمات بدون معطلی برای اتمام جمله.</li>
+        <li><strong>سنتز گفتار پیوسته (Chunked TTS):</strong> تبدیل اولین توکن‌های تولیدشده مغز به صوت بدون صبر برای پایان پاسخ متنی.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>توزیع تأخیر اجزای زنجیره صوت (Audio Latency Budget)</h3>
+      <div class="chart-box">
+        <canvas id="audioLatencyChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- بخش واژه‌نامه فنی دو سطحی -->
+  <div class="card" style="margin-bottom: 2rem;">
+    <h3>کالبدشکافی تکنولوژی‌های کلیدی صوت (تحلیل دو سطحی: مفهومی + مهندسی عمیق)</h3>
+
+    <!-- 1. VAD -->
+    <div class="tech-item">
+      <div class="tech-header">
+        <span class="tech-title">۱. تشخیص فعالیت صوتی کاربر (Voice Activity Detection - VAD)</span>
+        <span class="tech-tag">Zero-Latency Gatekeeper</span>
+      </div>
+      <div class="dual-box">
+        <div class="desc-simple">
+          <span class="desc-title green">💡 توضیح ساده و کاربردی:</span>
+          مثل گوش‌های تیز یک انسان؛ به محض اینکه کاربر دهانش را باز می‌کند، فیلترشکن سکوت را می‌شکند و اگر وسط حرف زدن هوش مصنوعی بپرد، هوش مصنوعی سریع متوجه شده و ساکت می‌شود تا به کاربر گوش کند!
+        </div>
+        <div class="desc-deep">
+          <span class="desc-title orange">⚙️ تحلیل تخصصی و مهندسی:</span>
+          استفاده از مدل سبک مبتنی بر شبکه عصبی (مثل Silero-VAD یا WebRTC VAD C-Bindings) با اندازه پنجره ۳۰ میلی‌ثانیه‌ای (Frame Windowing). این ماژول احتمال وجود سیگنال گفتار را در برابر نویز زمینه تخمین زده و فرمان فلاش کردن بافر (Interrupt Signal) را برای قطع بلادرنگ TTS صادر می‌کند.
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Log-Mel Spectrogram DSP -->
+    <div class="tech-item">
+      <div class="tech-header">
+        <span class="tech-title">۲. تبدیل سیگنال و اسپکتوگرام لاگ-مل (Log-Mel Filterbank with SIMD)</span>
+        <span class="tech-tag">Hardware DSP Acceleration</span>
+      </div>
+      <div class="dual-box">
+        <div class="desc-simple">
+          <span class="desc-title green">💡 توضیح ساده و کاربردی:</span>
+          گوش انسان صدا را به صورت موج‌های الکتریکی نمی‌شنود بلکه زیر و بمی فرکانس‌ها را می‌فهمد. این لایه صدای خام میکروفون را شبیه یک تصویر نقاشی حرارتی از نت‌های صدا درمی‌آورد تا شبکه عصبی بتواند آن را بخواند.
+        </div>
+        <div class="desc-deep">
+          <span class="desc-title orange">⚙️ تحلیل تخصصی و مهندسی:</span>
+          اعمال تبدیل فوریه زمان‌کوتاه (STFT) با پنجره Hanning به ابعاد ۲۵ میلی‌ثانیه و پرش ۱۰ میلی‌ثانیه (Hop size). خروجی از فیلتربانک‌های مقیاس مل (Mel-scale) رد شده و لگاریتم توان محاسبه می‌شود. این عملیات در `src/compute/simd` با دستورات AVX2 / NEON موازی‌سازی شده تا مصرف پردازنده به زیر ۱٪ برسد.
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Streaming STT -->
+    <div class="tech-item">
+      <div class="tech-header">
+        <span class="tech-title">۳. موتور تشخیص گفتار استریمینگ (Streaming STT Engine)</span>
+        <span class="tech-tag">Acoustic & Linguistic Decoding</span>
+      </div>
+      <div class="dual-box">
+        <div class="desc-simple">
+          <span class="desc-title green">💡 توضیح ساده و کاربردی:</span>
+          به جای اینکه کل سخنرانی شما را ضبط کند و بعد از یک دقیقه فکر کردن شروع به تایپ کند، کلمه به کلمه همان‌طور که از دهانتان خارج می‌شود را هم‌زمان می‌‌نویسد و به مغز مدل می‌فرستد.
+        </div>
+        <div class="desc-deep">
+          <span class="desc-title orange">⚙️ تحلیل تخصصی و مهندسی:</span>
+          استفاده از ساختار ترنسفرمر انکودر-دکودر بهینه‌شده با CTC (Connectionist Temporal Classification) یا کش کردن لایه‌های Attention مدل Whisper بر روی قطعات صوتی اسلایدی. باینری بومی بدون وابستگی پایتون از طریق هسته C++ و واسط Rust FFI، زمان استنتاج هر قطعه صوتی را به کمتر از ۵۰ میلی‌ثانیه کاهش می‌دهد.
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Low-Latency Neural TTS -->
+    <div class="tech-item">
+      <div class="tech-header">
+        <span class="tech-title">۴. سنتز گفتار عصبی تکه‌تکه (Chunked Neural TTS & Vocoder)</span>
+        <span class="tech-tag">Speech Generation Engine</span>
+      </div>
+      <div class="dual-box">
+        <div class="desc-simple">
+          <span class="desc-title green">💡 توضیح ساده و کاربردی:</span>
+          لازم نیست هوش مصنوعی جواب دو خطی‌اش را تا آخر بسازد و بعد حرف بزند؛ به محض اینکه کلمه اول را در مغزش تولید کرد، سریع تلفظ صوتی‌اش را شروع می‌کند تا کاربر حس کند با یک آدم زنده و بی‌درنگ در حال چت صوتی است!
+        </div>
+        <div class="desc-deep">
+          <span class="desc-title orange">⚙️ تحلیل تخصصی و مهندسی:</span>
+          استفاده از معماری‌های بر پایه مدل‌های مولد سریع (مانند VITS یا FastSpeech2 همراه با HiFi-GAN Vocoder). تبدیل استریم توکن به فونم بر اساس دیکشنری واژگان و سنتز با بافر چرخشی خروجی صوتی (Ring Audio Buffer) با نرخ نمونه‌برداری ۲۴ کیلوهرتز به صورت فشرده‌سازی Opus درون پروتکل WebRTC.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- جدول مقایسه تصمیمات معماری -->
+  <div class="card" style="margin-bottom: 2rem;">
+    <h3>تحلیل چرایی انتخاب تکنولوژی‌ها در برابر گزینه‌های دیگر (Trade-offs)</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>مولفه</th>
+          <th>تکنولوژی منتخب</th>
+          <th>گزینه رد شده</th>
+          <th>علت رد کردن گزینه جایگزین (RATIONALE)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>پروتکل انتقال صدا</strong></td>
+          <td><strong>WebRTC (Opus Codec)</strong></td>
+          <td>WebSocket (WAV/MP3)</td>
+          <td>پروتکل TCP در وب‌سوکت در صورت افت پکت دچار پدیده Head-of-Line Blocking شده و صدا قطع و وصل یا با تأخیر چندثانیه‌ای می‌رسد؛ WebRTC با بسترهای UDP کمترین تأخیر پکت را تضمین می‌کند.</td>
+        </tr>
+        <tr>
+          <td><strong>معماری مدل STT</strong></td>
+          <td><strong>Streaming CTC/Transformer</strong></td>
+          <td>Batch Whisper Vanilla</td>
+          <td>مدل پایه هاگینگ‌فیس ویسپر برای پردازش چانک‌های ثابت ۳۰ ثانیه‌ای طراحی شده و برای مکالمه تعاملی بلادرنگ تأخیر خردکننده و غیرقابل قبولی ایجاد می‌کند.</td>
+        </tr>
+        <tr>
+          <td><strong>الگوریتم DSP صدا</strong></td>
+          <td><strong>SIMD Vectorized C++/Rust</strong></td>
+          <td>Python Librosa / Torchaudio</td>
+          <td>کتابخانه‌های پایتونی برای پردازش هم‌زمان صدها کاربر سربار تبدیل نوع داده و تخصیص رم مکرر دارند، در حالی که پردازش برداری با دستورات رجیستری در سطح سخت‌افزار اجرا می‌شود.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid">
+    <div class="card pros">
+      <h3 style="color: var(--green); border-color: var(--green);">مزایای فنی و ارزش نوآورانه</h3>
+      <ul>
+        <li><strong>پشتیبانی از قطع کلام طبیعی (Barge-in / Interruption):</strong> توانایی قطع شدن پاسخ صوتی دستیار به محض تشخیص صحبت مجدد کاربر با دقت زیر ۱۰۰ میلی‌ثانیه.</li>
+        <li><strong>مصرف ناچیز پهنای باند:</strong> فشرده‌سازی Opus با بیت‌ریت داینامیک ۱۶ تا ۳۲ کیلوبیت بر ثانیه، قابل استفاده حتی روی اینترنت ضعیف موبایل.</li>
+        <li><strong>پردازش درون‌موتوری:</strong> حذف وابستگی به APIهای ابری خارجی (مثل OpenAI Realtime API) و حفظ کامل حریم خصوصی و امنیت صوتی کاربران سازمانی.</li>
+      </ul>
+    </div>
+
+    <div class="card cons">
+      <h3 style="color: var(--accent); border-color: var(--accent);">چالش‌های پیاده‌سازی و گلوگاه‌ها</h3>
+      <ul>
+        <li><strong>پیچیدگی حذف اکو و فیدبک صوتی (AEC):</strong> اگر کاربر از اسپیکر به جای هدفون استفاده کند، صدای خروجی ربات ممکن است دوباره وارد میکروفون شده و سیستم را به اشتباه بی اندازد.</li>
+        <li><strong>تنوع لهجه‌ها و زبان فارسی:</strong> تلفظ اسامی انگلیسی یا ترکیبی در زبان فارسی و نیاز به پایگاه داده غنی فونم‌های زبان فارسی.</li>
+        <li><strong>حساسیت به افت پکت‌های شبکه (Jitter):</strong> نیاز به بافر انطباقی (Jitter Buffer) هوشمند برای بازسازی پکت‌های گم‌شده بدون افزایش تأخیر مکالمه.</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    const ctx = document.getElementById('audioLatencyChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['فیلتر نویز و VAD', 'استخراج لاگ-مل (SIMD)', 'استنتاج گفتار به متن (STT)', 'استنتاج توکن اول مغز (LLM)', 'سنتز کلمه اول (TTS)', 'بافر شبکه WebRTC'],
+        datasets: [{
+          label: 'سهم از بودجه تأخیر (میلی‌ثانیه)',
+          data: [25, 10, 65, 45, 55, 30],
+          backgroundColor: [
+            'rgba(16, 185, 129, 0.8)',
+            'rgba(56, 189, 248, 0.8)',
+            'rgba(245, 158, 11, 0.8)',
+            'rgba(129, 140, 248, 0.8)',
+            'rgba(244, 63, 94, 0.8)',
+            'rgba(148, 163, 184, 0.8)'
+          ],
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { 
+            grid: { color: '#1e293b' }, 
+            ticks: { color: '#94a3b8', font: { family: 'Vazirmatn' } },
+            title: { display: true, text: 'میلی‌ثانیه (ms)', color: '#94a3b8', font: { family: 'Vazirmatn' } }
+          },
+          x: { grid: { display: false }, ticks: { color: '#f1f5f9', font: { family: 'Vazirmatn', size: 10 } } }
+        },
+        plugins: {
+          legend: { display: false }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

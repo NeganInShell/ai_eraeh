@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>امنیت، مدل اقتصادی (TCO) و متریک‌های عملکردی | LucilleAI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg: #090d16;
+      --card: #111726;
+      --border: #1e293b;
+      --primary: #38bdf8;
+      --secondary: #818cf8;
+      --accent: #f43f5e;
+      --green: #10b981;
+      --yellow: #f59e0b;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; }
+    body { background: var(--bg); color: var(--text); font-family: 'Vazirmatn', sans-serif; padding: 2rem; margin: 0; line-height: 1.8; }
+    .header { border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+    h1 { font-size: 2rem; color: #fff; margin-bottom: 0.5rem; }
+    .badge { background: rgba(16, 185, 129, 0.15); color: var(--green); padding: 0.3rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: bold; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+    .card h3 { color: var(--primary); font-size: 1.2rem; margin-bottom: 1rem; border-right: 3px solid var(--primary); padding-right: 0.6rem; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    th, td { padding: 0.8rem; border-bottom: 1px solid var(--border); text-align: right; font-size: 0.9rem; }
+    th { color: var(--muted); background: rgba(255,255,255,0.02); }
+    .chart-box { height: 260px; position: relative; }
+    .tag { padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: bold; }
+    .tag-green { background: rgba(16, 185, 129, 0.2); color: var(--green); }
+    .tag-yellow { background: rgba(245, 158, 11, 0.2); color: var(--yellow); }
+    .tag-blue { background: rgba(56, 189, 248, 0.2); color: var(--primary); }
+
+    /* استایل واژه‌نامه فنی دو سطحی */
+    .tech-item {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem;
+      margin-bottom: 1.2rem;
+    }
+    .tech-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.8rem;
+    }
+    .tech-title { font-size: 1.15rem; font-weight: 700; color: #fff; }
+    .tech-tag {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--green);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .dual-box { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .desc-simple {
+      background: rgba(16, 185, 129, 0.05);
+      border-right: 3px solid var(--green);
+      padding: 0.8rem;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      color: #cbd5e1;
+    }
+    .desc-deep {
+      background: rgba(56, 189, 248, 0.05);
+      border-right: 3px solid var(--primary);
+      padding: 0.8rem;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      color: #cbd5e1;
+    }
+    .desc-title { font-weight: bold; margin-bottom: 0.3rem; display: block; }
+    .desc-title.green { color: var(--green); }
+    .desc-title.blue { color: var(--primary); }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <span class="badge">ستون پایداری اینترپرایز و دفاع اقتصادی</span>
+    <h1>معماری امنیت، تحلیل هزینه مالکیت (TCO) و تلمتری عملکرد</h1>
+    <p style="color: var(--muted);">کالبدشکافی استراتژی حفاظت از داده‌های سازمانی، تحلیل اقتصادی سخت‌افزار ابری در برابر استقرار محلی و مانیتورینگ متریک‌های بلادرنگ سیستم.</p>
+  </div>
+
+  <!-- بخش اول: امنیت و حریم خصوصی داده‌ها -->
+  <div class="card" style="margin-bottom: 2rem;">
+    <h3>۱. امنیت، کنترل حریم خصوصی و تاب‌آوری سیستم</h3>
+
+    <!-- 1. Zero Retention -->
+    <div class="tech-item">
+      <div class="tech-header">
+        <span class="tech-title">سیاست عدم نگه‌داری بافرها (Ephemeral Streaming & Zero Data Retention)</span>
+        <span class="tech-tag">Data Privacy</span>
+      </div>
+      <div class="dual-box">
+        <div class="desc-simple">
+          <span class="desc-title green">💡 توضیح ساده و کاربردی:</span>
+          صدا و فریم‌های تصویر کاربر هیچ‌وقت روی هارددیسک سرور ذخیره نمی‌شوند؛ مثل مکالمه‌ای که با یک گوشی امن انجام می‌دهید و به محض تمام شدن جمله، صدا از هوا ناپدید می‌شود!
+        </div>
+        <div class="desc-deep">
+          <span class="desc-title blue">⚙️ تحلیل تخصصی و مهندسی:</span>
+          بافرهای ورودی PCM و فریم‌های خام دوربین در حافظه Pinned RAM فرّار پردازش شده و به محض تولید توکن‌ها یا اتمام سشن، بلاک‌های حافظه با الگوی صفرنویسی (Zero-fill overwrite) پاک‌سازی می‌شوند. هیچ فایل موقتی (Temp file) روی دیسک I/O ایجاد نمی‌شود.
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Multi-Tenancy Isolation -->
+    <div class="tech-item">
+      <div class="tech-header">
+        <span class="tech-title">جداسازی کامل داده‌های سازمانی (Multi-Tenancy Isolation in Qdrant)</span>
+        <span class="tech-tag">Tenant Isolation</span>
+      </div>
+      <div class="dual-box">
+        <div class="desc-simple">
+          <span class="desc-title green">💡 توضیح ساده و کاربردی:</span>
+          اگر دو شرکت مختلف هم‌زمان از این هوش مصنوعی استفاده کنند، اسناد محرمانه شرکت اول در گاوصندوقی با کلید مجزا قرار دارد و حتی اگر مدل اشتباه کند، به اسناد شرکت دوم دسترسی نخواهد داشت.
+        </div>
+        <div class="desc-deep">
+          <span class="desc-title blue">⚙️ تحلیل تخصصی و مهندسی:</span>
+          اعمال متادیتای قطعی <code>tenant_id</code> و <code>role_level</code> در سطح Payload Filter شاخص‌های HNSW پایگاه داده برداری. لایه بازیابی به صورت رمزنگاری‌شده تضمین می‌کند که بردارهای یک کلاینت در فضای جستجوی سایر سشن‌ها قرار نگیرند.
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Guardrails & Prompt Injection -->
+    <div class="tech-item">
+      <div class="tech-header">
+        <span class="tech-title">فیلترهای گاردریل و مقابله با جیل‌بریک (Input/Output Safety Rails)</span>
+        <span class="tech-tag">Model Hardening</span>
+      </div>
+      <div class="dual-box">
+        <div class="desc-simple">
+          <span class="desc-title green">💡 توضیح ساده و کاربردی:</span>
+          یک فیلتر هوشمند نگهبان قبل از ورود کلمات به مغز مدل و بعد از تولید جواب ایستاده است تا اگر کسی قصد فریب دادن یا دزدیدن اطلاعات سیستم را داشت، جلویش را سد کند.
+        </div>
+        <div class="desc-deep">
+          <span class="desc-title blue">⚙️ تحلیل تخصصی و مهندسی:</span>
+          پیاده‌سازی ماژول <code>src/inference/safety.rs</code> برای اعتبارسنجی عبارات ورودی و مقایسه امبدینگ پرامپت با بانک الگوهای حمله Injection، به همراه فیلترهای استخراج الگوهای اطلاعات حساس (PII Masking مانند شماره کارت، کد ملی و توکن‌ها).
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- بخش دوم: تحلیل مدل اقتصادی و TCO -->
+  <div class="card" style="margin-bottom: 2rem;">
+    <h3>۲. تحلیل مقایسه‌ای مدل اقتصادی و هزینه کل مالکیت (TCO Estimation)</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>سناریوی استقرار</th>
+          <th>زیرساخت پیشنهادی</th>
+          <th>هزینه راه‌اندازی اولیه (CapEx)</th>
+          <th>هزینه ماهانه نگهداری (OpEx)</th>
+          <th>هزینه تخمینی هر دقیقه مکالمه</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>سرور اختصاصی فیزیکی (On-Premise)</strong></td>
+          <td>کارت گرافیک RTX 4090 (24GB) + پردازنده 16 Core + رم 64GB</td>
+          <td>حدود ۱۵۰ تا ۱۸۰ میلیون تومان</td>
+          <td>تنها هزینه برق و اینترنت سازمانی (~ ۲ میلیون تومان)</td>
+          <td><span class="tag tag-green">کمتر از ۵۰ تومان / دقیقه</span></td>
+        </tr>
+        <tr>
+          <td><strong>اجاره سرور ابری اختصاصی (Dedicated GPU Cloud)</strong></td>
+          <td>سرور ابری با یک پردازنده NVIDIA A10G یا RTX 3090 (24GB)</td>
+          <td>صفر تومان (بدون ریسک اولیه)</td>
+          <td>حدود ۱۰ تا ۱۸ میلیون تومان / ماه</td>
+          <td><span class="tag tag-yellow">حدود ۲۰۰ تا ۳۵۰ تومان / دقیقه</span></td>
+        </tr>
+        <tr>
+          <td><strong>اتکا به APIهای ابری خارجی (مانند OpenAI Realtime)</strong></td>
+          <td>سرویس ابری مدیریت‌شده خارجی</td>
+          <td>صفر تومان</td>
+          <td>متغیر بر اساس مصرف (بالای ۱۰۰۰ دلار در ماه برای بار متوسط)</td>
+          <td><span class="tag tag-yellow">حدود ۴۰۰۰ تا ۶۰۰۰ تومان / دقیقه (دلاری)</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- بخش سوم: متریک‌های عملکردی و بنچ‌مارک -->
+  <div class="grid">
+    <div class="card">
+      <h3>متریک‌های کلیدی سرعت و پاسخ‌دهی (Latency Telemetry)</h3>
+      <div class="chart-box">
+        <canvas id="ttftChart"></canvas>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>تست پایداری و افت بازده تحت بار هم‌زمان (Concurrency Load Test)</h3>
+      <div class="chart-box">
+        <canvas id="loadChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // نمودار تفکیک سرعت توکن
+    const ctx1 = document.getElementById('ttftChart').getContext('2d');
+    new Chart(ctx1, {
+      type: 'bar',
+      data: {
+        labels: ['زمان تا اولین توکن صوتی (TTFT)', 'نرخ تولید توکن (TPS)', 'تأخیر VAD و قطع کلام'],
+        datasets: [{
+          label: 'مقدار ثبت‌شده (برحسب ms یا Token/s)',
+          data: [180, 48, 45],
+          backgroundColor: ['#38bdf8', '#10b981', '#f59e0b'],
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { family: 'Vazirmatn' } } },
+          x: { grid: { display: false }, ticks: { color: '#f1f5f9', font: { family: 'Vazirmatn' } } }
+        },
+        plugins: { legend: { display: false } }
+      }
+    });
+
+    // نمودار پایداری تحت بار هم‌زمان
+    const ctx2 = document.getElementById('loadChart').getContext('2d');
+    new Chart(ctx2, {
+      type: 'line',
+      data: {
+        labels: ['۵ کاربر هم‌زمان', '۱۵ کاربر هم‌زمان', '۳۰ کاربر هم‌زمان', '۵۰ کاربر هم‌زمان'],
+        datasets: [
+          {
+            label: 'میانگین تأخیر پاسخ (میلی‌ثانیه)',
+            data: [180, 195, 230, 380],
+            borderColor: '#38bdf8',
+            backgroundColor: 'rgba(56, 189, 248, 0.1)',
+            fill: true,
+            tension: 0.3
+          },
+          {
+            label: 'درصد اشغال حافظه گرافیکی (VRAM %)',
+            data: [62, 68, 76, 89],
+            borderColor: '#10b981',
+            tension: 0.3
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { family: 'Vazirmatn' } } },
+          x: { grid: { display: false }, ticks: { color: '#f1f5f9', font: { family: 'Vazirmatn' } } }
+        },
+        plugins: {
+          legend: { position: 'bottom', labels: { color: '#94a3b8', font: { family: 'Vazirmatn' } } }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

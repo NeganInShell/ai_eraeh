@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>نقشه راه، فازبندی و مدیریت تسک‌ها (Roadmap & ToDo Engine)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d16;
+      --card: #111726;
+      --border: #1e293b;
+      --primary: #38bdf8;
+      --secondary: #818cf8;
+      --accent: #f43f5e;
+      --green: #10b981;
+      --yellow: #f59e0b;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'Vazirmatn', sans-serif; padding: 2rem; margin: 0; line-height: 1.8; }
+    .header { border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end; }
+    h1 { font-size: 2rem; color: #fff; margin-bottom: 0.5rem; }
+    .badge { background: rgba(16, 185, 129, 0.15); color: var(--green); padding: 0.3rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: bold; border: 1px solid rgba(16, 185, 129, 0.3); }
+    
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-pill {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+    }
+    .stat-val { font-size: 1.6rem; font-weight: 900; color: var(--primary); }
+    .stat-lbl { font-size: 0.8rem; color: var(--muted); }
+
+    .filter-bar {
+      display: flex;
+      gap: 0.8rem;
+      margin-bottom: 1.5rem;
+      align-items: center;
+      background: var(--card);
+      padding: 0.8rem 1.2rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+    .filter-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 0.4rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+    }
+    .filter-btn.active, .filter-btn:hover {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .phases-container {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    .phase-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+    .phase-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.2rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 0.8rem;
+    }
+    .phase-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .phase-badge {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      background: rgba(129, 140, 248, 0.15);
+      color: var(--secondary);
+    }
+
+    .todo-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .todo-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(30, 41, 59, 0.3);
+      border: 1px solid var(--border);
+      padding: 0.9rem 1.2rem;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+    .todo-item:hover {
+      border-color: rgba(56, 189, 248, 0.4);
+      background: rgba(30, 41, 59, 0.5);
+    }
+    .todo-item.done {
+      opacity: 0.5;
+      text-decoration: line-through;
+      border-color: var(--green);
+    }
+    .todo-content {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .checkbox {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      accent-color: var(--primary);
+    }
+    .priority-badge {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    .p-critical { background: rgba(244, 63, 94, 0.2); color: var(--accent); border: 1px solid rgba(244, 63, 94, 0.3); }
+    .p-high { background: rgba(245, 158, 11, 0.2); color: var(--yellow); border: 1px solid rgba(245, 158, 11, 0.3); }
+    .p-medium { background: rgba(56, 189, 248, 0.2); color: var(--primary); border: 1px solid rgba(56, 189, 248, 0.3); }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div>
+      <span class="badge">سیستم مدیریت اولویت‌ها و تصمیم‌گیری هیئت مدیره</span>
+      <h1>نقشه راه اجرایی، فازبندی و تودولیست تعاملی LucilleAI</h1>
+    </div>
+    <div style="font-size: 0.85rem; color: var(--muted);">
+      وضعیت ذخیره‌سازی: <span style="color: var(--green);">فعال (حافظه محلی مرورگر)</span>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-pill">
+      <div class="stat-val" id="totalTasks">۱۲</div>
+      <div class="stat-lbl">کل وظایف تعریف‌شده</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-val" style="color: var(--green);" id="doneTasks">۰</div>
+      <div class="stat-lbl">وظایف تکمیل‌شده</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-val" style="color: var(--yellow);" id="pendingTasks">۱۲</div>
+      <div class="stat-lbl">در انتظار پیاده‌سازی</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-val" style="color: var(--accent);" id="completionRate">۰٪</div>
+      <div class="stat-lbl">درصد پیشرفت کلی</div>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <span style="font-size: 0.85rem; color: var(--muted); margin-left: 0.5rem;">فیلتر نمایش:</span>
+    <button class="filter-btn active" onclick="setFilter('all')">همه وظایف</button>
+    <button class="filter-btn" onclick="setFilter('critical')">فقط اولویت بحرانی (Critical)</button>
+    <button class="filter-btn" onclick="setFilter('pending')">تکمیل نشده‌ها</button>
+  </div>
+
+  <div class="phases-container" id="phasesRoot">
+    <!-- فازها و تسک‌ها به وسیله اسکریپت ری‌اکتیو در پایین رندر می‌شوند -->
+  </div>
+
+  <script>
+    // مدل داده اولیه فازها و تسک‌ها
+    const initialRoadmap = [
+      {
+        id: "phase1",
+        title: "فاز ۱: نهایی‌سازی معماری و انتخاب مدل‌های پایه (هفته ۱ و ۲)",
+        badge: "وضعیت: جاری",
+        tasks: [
+          { id: 1, title: "تصمیم‌گیری بین Lucille Native و مدل‌های آماده براساس تارگت سخت‌افزار", priority: "critical", tech: "Architecture", done: false },
+          { id: 2, title: "بنچ‌مارک VRAM کارت گرافیک RTX 3090/4090 برای لود هم‌زمان", priority: "critical", tech: "Hardware Profiling", done: false },
+          { id: 3, title: "تعریف اینترفیس‌های Trait ورودی چندوجهی در Rust (AudioChunk, Frame)", priority: "high", tech: "Rust Core", done: false }
+        ]
+      },
+      {
+        id: "phase2",
+        title: "فاز ۲: خط لوله صوت بلادرنگ و ارتباط WebRTC (هفته ۳ و ۴)",
+        badge: "وضعیت: آینده نزدیک",
+        tasks: [
+          { id: 4, title: "راه‌اندازی سرور دریافت استریم صدای UDP بر بستر webrtc-rs", priority: "critical", tech: "WebRTC / Rust", done: false },
+          { id: 5, title: "پیاده‌سازی بافر حلقوی پین‌شده (Pinned Ring Buffer) برای صفر کردن کپی رم", priority: "high", tech: "C++ / CUDA", done: false },
+          { id: 6, title: "یکپارچه‌سازی VAD سبک برای قطع خودکار صدای ربات حین صحبت کاربر", priority: "high", tech: "DSP / Silero", done: false }
+        ]
+      },
+      {
+        id: "phase3",
+        title: "فاز ۳: ماژول بینایی، پچینگ تصویر و پروجکشن چندوجهی (هفته ۵ تا ۷)",
+        badge: "وضعیت: در انتظار فاز ۲",
+        tasks: [
+          { id: 7, title: "پیاده‌سازی پچینگ ابعاد 16x16 و لایه 2-Layer MLP Projector به زبان Rust", priority: "high", tech: "ViT / Rust", done: false },
+          { id: 8, title: "اتصال کرنل‌های FlashAttention موجود در src/gpu/kernels به انکودر ویژن", priority: "medium", tech: "CUDA Kernels", done: false },
+          { id: 9, title: "فیلترینگ داینامیک فریم‌های ثابت دوربین جهت کنترل مصرف حافظه گرافیکی", priority: "medium", tech: "Computer Vision", done: false }
+        ]
+      },
+      {
+        id: "phase4",
+        title: "فاز ۴: یکپارچه‌سازی پایگاه دانش سازمانی و بسته دفاعیه (هفته ۸ به بعد)",
+        badge: "وضعیت: آماده‌سازی دفاعیه",
+        tasks: [
+          { id: 10, title: "ادغام دیتابیس برداری Qdrant با پایپ‌لاین سرچ ترکیبی (Dense + BM25)", priority: "high", tech: "Vector DB / RAG", done: false },
+          { id: 11, title: "استخراج گزارش‌های Latency Profiling از src/runtime/profiling.rs", priority: "critical", tech: "Observability", done: false },
+          { id: 12, title: "تکمیل مستندات نوآوری فناورانه برای داوری دانش‌بنیان سطح ۱", priority: "critical", tech: "Governance / IP", done: false }
+        ]
+      }
+    ];
+
+    let currentFilter = 'all';
+    let roadmapData = JSON.parse(localStorage.getItem('lucille_roadmap')) || initialRoadmap;
+
+    function saveState() {
+      localStorage.setItem('lucille_roadmap', JSON.stringify(roadmapData));
+      render();
+    }
+
+    function toggleTask(taskId) {
+      roadmapData.forEach(p => {
+        p.tasks.forEach(t => {
+          if (t.id === taskId) t.done = !t.done;
+        });
+      });
+      saveState();
+    }
+
+    function setFilter(filter) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      render();
+    }
+
+    function updateStats() {
+      let total = 0;
+      let done = 0;
+      roadmapData.forEach(p => {
+        p.tasks.forEach(t => {
+          total++;
+          if (t.done) done++;
+        });
+      });
+      document.getElementById('totalTasks').innerText = total;
+      document.getElementById('doneTasks').innerText = done;
+      document.getElementById('pendingTasks').innerText = total - done;
+      document.getElementById('completionRate').innerText = total > 0 ? Math.round((done / total) * 100) + '٪' : '۰٪';
+    }
+
+    function render() {
+      updateStats();
+      const root = document.getElementById('phasesRoot');
+      root.innerHTML = '';
+
+      roadmapData.forEach(phase => {
+        const filteredTasks = phase.tasks.filter(t => {
+          if (currentFilter === 'critical') return t.priority === 'critical';
+          if (currentFilter === 'pending') return !t.done;
+          return true;
+        });
+
+        if (filteredTasks.length === 0 && currentFilter !== 'all') return;
+
+        const card = document.createElement('div');
+        card.className = 'phase-card';
+
+        let tasksHtml = filteredTasks.map(t => `
+          <div class="todo-item ${t.done ? 'done' : ''}">
+            <div class="todo-content">
+              <input type="checkbox" class="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask(${t.id})">
+              <span style="font-size: 0.95rem; color: #fff;">${t.title}</span>
+            </div>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+              <span style="font-size: 0.75rem; color: var(--muted); background: rgba(255,255,255,0.05); padding: 0.2rem 0.5rem; border-radius: 4px;">${t.tech}</span>
+              <span class="priority-badge p-${t.priority}">
+                ${t.priority === 'critical' ? 'بحرانی' : t.priority === 'high' ? 'بالا' : 'متوسط'}
+              </span>
+            </div>
+          </div>
+        `).join('');
+
+        card.innerHTML = `
+          <div class="phase-header">
+            <div class="phase-title">
+              <span>📌</span>
+              <span>${phase.title}</span>
+            </div>
+            <span class="phase-badge">${phase.badge}</span>
+          </div>
+          <div class="todo-list">
+            ${tasksHtml}
+          </div>
+        `;
+        root.appendChild(card);
+      });
+    }
+
+    // رندر اولیه
+    render();
+  </script>
+</body>
+</html>

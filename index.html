@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LucilleAI | داشبورد جامع معماری و دفاعیه مهندسی</title>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d16;
+      --sidebar: #0d1322;
+      --border: #1e293b;
+      --primary: #38bdf8;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', sans-serif; }
+    body { background: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
+
+    /* سایدبار کشویی */
+    .sidebar {
+      width: 320px;
+      background: var(--sidebar);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      transition: width 0.25s ease, margin-right 0.25s ease;
+      z-index: 10;
+    }
+    .sidebar.collapsed {
+      width: 0;
+      margin-right: -1px;
+      overflow: hidden;
+      border-left: none;
+    }
+
+    .brand {
+      padding: 1.2rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      white-space: nowrap;
+    }
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      color: #090d16;
+      flex-shrink: 0;
+    }
+    .brand-text h2 { font-size: 1.1rem; color: #fff; }
+    .brand-text p { font-size: 0.75rem; color: var(--muted); }
+
+    .nav-list {
+      list-style: none;
+      padding: 1rem;
+      overflow-y: auto;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .nav-item {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+    .nav-item:hover { background: rgba(255, 255, 255, 0.03); color: #fff; }
+    .nav-item.active {
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--primary);
+      border-color: rgba(56, 189, 248, 0.3);
+      font-weight: 700;
+    }
+
+    /* نمای اصلی */
+    .main-view {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background: var(--bg);
+      min-width: 0;
+    }
+    .top-bar {
+      height: 55px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.2rem;
+      background: rgba(13, 19, 34, 0.5);
+      flex-shrink: 0;
+    }
+    .left-tools { display: flex; align-items: center; gap: 0.8rem; }
+    .toggle-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 34px;
+      height: 34px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+    .toggle-btn:hover { background: rgba(56, 189, 248, 0.15); border-color: var(--primary); color: var(--primary); }
+
+    .action-group { display: flex; gap: 0.6rem; align-items: center; }
+    .btn-action {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 0.35rem 0.85rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .btn-action:hover { color: #fff; border-color: var(--primary); background: rgba(56, 189, 248, 0.08); }
+    .btn-pdf { border-color: rgba(16, 185, 129, 0.4); color: #10b981; }
+    .btn-pdf:hover { background: rgba(16, 185, 129, 0.15); border-color: #10b981; color: #fff; }
+
+    /* نگهدارنده آی‌فریم‌ها برای تعامل زنده و پرینت */
+    .frames-container {
+      flex-grow: 1;
+      position: relative;
+      height: calc(100vh - 55px);
+      width: 100%;
+    }
+    .page-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: none;
+    }
+    .page-frame.visible {
+      display: block;
+    }
+
+    /* تنظیمات ویژه برای چاپ یکپارچه تمام ۸ صفحه */
+    @media print {
+      body {
+        overflow: visible !important;
+        height: auto !important;
+        display: block !important;
+        background: #090d16 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .sidebar, .top-bar {
+        display: none !important;
+      }
+      .main-view {
+        height: auto !important;
+        overflow: visible !important;
+        display: block !important;
+      }
+      .frames-container {
+        height: auto !important;
+        overflow: visible !important;
+        position: static !important;
+        display: block !important;
+      }
+      .page-frame {
+        display: block !important;
+        position: relative !important;
+        width: 100% !important;
+        height: 1200px !important; /* ارتفاع متناسب با هر صفحه */
+        page-break-after: always !important;
+        break-after: page !important;
+        margin-bottom: 2rem !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- سایدبار ناوبری -->
+  <aside id="sidebar" class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">L</div>
+      <div class="brand-text">
+        <h2>LucilleAI Engine</h2>
+        <p>داشبورد جامع دفاعیه و معماری</p>
+      </div>
+    </div>
+
+    <ul class="nav-list">
+      <li class="nav-item active" onclick="switchPage(0, this, '۱. معماری بومی لوسیل (Rust)')">
+        <span>🏛️</span>
+        <span>۱. معماری بومی لوسیل (Rust)</span>
+      </li>
+      <li class="nav-item" onclick="switchPage(1, this, '۲. معماری ماژولار (Microservices)')">
+        <span>🧩</span>
+        <span>۲. معماری ماژولار (Microservices)</span>
+      </li>
+      <li class="nav-item" onclick="switchPage(2, this, '۳. معماری ترکیبی (Hybrid RAG)')">
+        <span>📚</span>
+        <span>۳. معماری ترکیبی (Hybrid RAG)</span>
+      </li>
+      <li class="nav-item" onclick="switchPage(3, this, '۴. خط لوله بلادرنگ صوت (Audio)')">
+        <span>🎙️</span>
+        <span>۴. خط لوله بلادرنگ صوت (Audio)</span>
+      </li>
+      <li class="nav-item" onclick="switchPage(4, this, '۵. خط لوله پردازش تصویر (ViT)')">
+        <span>👁️</span>
+        <span>۵. خط لوله پردازش تصویر (ViT)</span>
+      </li>
+      <li class="nav-item" onclick="switchPage(5, this, '۶. تحلیل سخت‌افزار و مدل آماده')">
+        <span>⚡</span>
+        <span>۶. تحلیل سخت‌افزار و مدل آماده</span>
+      </li>
+      <li class="nav-item" onclick="switchPage(6, this, '۷. نقشه راه و تسک‌های اجرایی')">
+        <span>🎯</span>
+        <span>۷. نقشه راه و تسک‌های اجرایی</span>
+      </li>
+      <li class="nav-item" onclick="switchPage(7, this, '۸. امنیت، برآورد مالی و تلمتری')">
+        <span>🛡️</span>
+        <span>۸. امنیت، برآورد مالی و تلمتری</span>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- فریم اصلی نمایش محتوا -->
+  <main class="main-view">
+    <div class="top-bar">
+      <div class="left-tools">
+        <button class="toggle-btn" title="باز و بسته کردن منو" onclick="toggleSidebar()">☰</button>
+        <span id="currentTitle" style="font-size: 0.9rem; color: var(--muted); font-weight: 600;">۱. معماری بومی لوسیل (Rust)</span>
+      </div>
+
+      <div class="action-group">
+        <button class="btn-action btn-pdf" onclick="window.print()">
+          <span>🖨️</span>
+          <span>چاپ کامل تمام صفحات (PDF یکپارچه)</span>
+        </button>
+        <button class="btn-action" onclick="toggleFullScreen()">
+          <span>🖥️</span>
+          <span>تمام‌صفحه</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- تمام صفحات به صورت موازی در حافظه لود هستند تا موقع پرینت همه با هم بیایند -->
+    <div class="frames-container">
+      <iframe class="page-frame visible" src="pages/01_architecture_a.html"></iframe>
+      <iframe class="page-frame" src="pages/02_architecture_b.html"></iframe>
+      <iframe class="page-frame" src="pages/03_architecture_c.html"></iframe>
+      <iframe class="page-frame" src="pages/04_audio_pipeline.html"></iframe>
+      <iframe class="page-frame" src="pages/05_vision_pipeline.html"></iframe>
+      <iframe class="page-frame" src="pages/06_feasibility_matrix.html"></iframe>
+      <iframe class="page-frame" src="pages/07_roadmap_todo.html"></iframe>
+      <iframe class="page-frame" src="pages/08_security_cost_metrics.html"></iframe>
+    </div>
+  </main>
+
+  <script>
+    // تغییر باز/بسته بودن سایدبار
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('collapsed');
+    }
+
+    // سوییچ بین صفحات برای نمایش زنده
+    function switchPage(index, el, title) {
+      const frames = document.querySelectorAll('.page-frame');
+      frames.forEach((f, i) => {
+        if (i === index) {
+          f.classList.add('visible');
+        } else {
+          f.classList.remove('visible');
+        }
+      });
+
+      document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+      el.classList.add('active');
+      document.getElementById('currentTitle').innerText = title;
+    }
+
+    // تمام صفحه برای ویدئو پروژکتور
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+      }
+    }
+  </script>
+</body>
+</html>

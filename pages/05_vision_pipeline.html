@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>خط لوله پردازش بینایی ماشین و فریم‌های ویدیو (Vision Pipeline)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg: #090d16;
+      --card: #111726;
+      --border: #1e293b;
+      --primary: #10b981;
+      --secondary: #38bdf8;
+      --accent: #f43f5e;
+      --purple: #a855f7;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'Vazirmatn', sans-serif; padding: 2rem; margin: 0; line-height: 1.8; }
+    .header { border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+    h1 { font-size: 2rem; color: #fff; margin-bottom: 0.5rem; }
+    .badge { background: rgba(16, 185, 129, 0.15); color: var(--primary); padding: 0.3rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: bold; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+    .card h3 { color: var(--primary); font-size: 1.2rem; margin-bottom: 1rem; border-right: 3px solid var(--primary); padding-right: 0.6rem; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    th, td { padding: 0.8rem; border-bottom: 1px solid var(--border); text-align: right; font-size: 0.9rem; }
+    th { color: var(--muted); background: rgba(255,255,255,0.02); }
+    .pros { border-right: 4px solid var(--primary); }
+    .cons { border-right: 4px solid var(--accent); }
+    ul { padding-right: 1.2rem; }
+    li { margin-bottom: 0.5rem; color: var(--muted); }
+    li strong { color: var(--text); }
+    .chart-box { height: 260px; position: relative; }
+
+    /* استایل واژه‌نامه فنی دو سطحی */
+    .tech-item {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem;
+      margin-bottom: 1.2rem;
+    }
+    .tech-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.8rem;
+    }
+    .tech-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .tech-tag {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--primary);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .dual-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .desc-simple {
+      background: rgba(16, 185, 129, 0.05);
+      border-right: 3px solid var(--primary);
+      padding: 0.8rem;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      color: #cbd5e1;
+    }
+    .desc-deep {
+      background: rgba(56, 189, 248, 0.05);
+      border-right: 3px solid var(--secondary);
+      padding: 0.8rem;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      color: #cbd5e1;
+    }
+    .desc-title {
+      font-weight: bold;
+      margin-bottom: 0.3rem;
+      display: block;
+    }
+    .desc-title.green { color: var(--primary); }
+    .desc-title.blue { color: var(--secondary); }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <span class="badge">ماژول ادراک بصری — درک تصاویر و جریان ویدیویی زنده</span>
+    <h1>خط لوله پردازش بینایی ماشین و فریم‌های زنده (Vision & Video Pipeline)</h1>
+    <p style="color: var(--muted);">معماری تبدیل فریم‌های خام ویدیویی به توکن‌های بصری، ادغام در فضای برداری زبانی لوسیل و درک صحنه با ترنسفرمرهای بینایی (ViT) بر بستر شتاب‌دهنده سخت‌افزاری CUDA.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>نگاه اجمالی به پایپ‌لاین بصری چندوجهی</h3>
+      <p style="color: var(--muted); font-size: 0.95rem; margin-bottom: 1rem;">
+        تصاویر و فریم‌های دوربین برای درک توسط مدل‌های زبانی باید فرمت‌بندی شوند:
+      </p>
+      <ul>
+        <li><strong>نمونه‌برداری انطباقی فریم‌ها (Keyframe Sampling):</strong> فیلتر کردن فریم‌های تکراری و ساکن وب‌کم جهت جلوگیری از اشباع پردازشگر گرافیکی.</li>
+        <li><strong>تقسیم به قطعات بصری (Patch Extraction):</strong> خرد کردن تصویر به ماتریس‌های کوچک شبیه به کلمات یک متن.</li>
+        <li><strong>انکودر ترنسفرمر بینایی (ViT Backbone):</strong> استخراج روابط فضایی و بافت‌های مفهومی تصویر.</li>
+        <li><strong>تطبیق‌دهنده چندوجهی (Multimodal Projector):</strong> همگام‌سازی ابعاد امبدینگ‌های تصویر با فضای زبانی لوسیل.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>مصرف حافظه گرافیکی و نرخ فریم بر اساس وضوح تصویر</h3>
+      <div class="chart-box">
+        <canvas id="visionMetricsChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- بخش واژه‌نامه فنی دو سطحی -->
+  <div class="card" style="margin-bottom: 2rem;">
+    <h3>کالبدشکافی تکنولوژی‌های کلیدی بینایی (تحلیل دو سطحی: مفهومی + مهندسی عمیق)</h3>
+
+    <!-- 1. Patch Extraction -->
+    <div class="tech-item">
+      <div class="tech-header">
+        <span class="tech-title">۱. خرد کردن تصویر به پچ‌های فضایی (Patch Extraction & 2D Projection)</span>
+        <span class="tech-tag">Visual Tokenization</span>
+      </div>
+      <div class="dual-box">
+        <div class="desc-simple">
+          <span class="desc-title green">💡 توضیح ساده و کاربردی:</span>
+          مدل‌های زبانی فقط کلمه می‌فهمند نه عکس! برای اینکه عکس را به مدل نشان دهیم، تصویر را مثل کاشی‌های یک موزاییک (مثلاً ۱۶ در ۱۶ پیکسل) می‌بُریم؛ هر کاشی کوچک حالا نقش یک «کلمه تصویری» را برای هوش مصنوعی بازی می‌کند.
+        </div>
+        <div class="desc-deep">
+          <span class="desc-title blue">⚙️ تحلیل تخصصی و مهندسی:</span>
+          تبدیل تنسور تصویر ورودی با ابعاد $C \times H \times W$ به دنباله‌ای از پچ‌های دو بعدی با ابعاد $N \times (P^2 \cdot C)$ که در آن $P$ اندازه پچ (مثلاً ۱۴ یا ۱۶) و $N = \frac{HW}{P^2}$ تعداد پچ‌ها است. یک لایه کانولوشن یا تصویرسازی خطی Linear Projection این پچ‌ها را به ابعاد پنهان $D$ برده و Positional Embedding دوبعدی را اضافه می‌کند.
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Vision Transformer (ViT) -->
+    <div class="tech-item">
+      <div class="tech-header">
+        <span class="tech-title">۲. ترنسفرمر بینایی ماشین (Vision Transformer - ViT Backbone)</span>
+        <span class="tech-tag">Visual Feature Representation</span>
+      </div>
+      <div class="dual-box">
+        <div class="desc-simple">
+          <span class="desc-title green">💡 توضیح ساده و کاربردی:</span>
+          به جای روش‌های قدیمی فیلترگذاری عددی روی عکس (CNN)، این ماژول با نگاه کردن به کل تصویر می‌فهمد که مثلاً این دست در گوشه پایین تصویر به آن فنجان چای در گوشه بالا مربوط است و روابط اشیاء را درک می‌کند.
+        </div>
+        <div class="desc-deep">
+          <span class="desc-title blue">⚙️️ تحلیل تخصصی و مهندسی:</span>
+          استفاده از بلوک‌های Multi-Head Self-Attention موجود در `src/ml/attention.rs`. با توجه به پیاده‌سازی بومی FlashAttention در هسته CUDA لوسیل، ماتریس‌های توجه پچ‌های تصویر بدون نیاز به ذخیره کامل ماتریس $N \times N$ در VRAM محاسبه شده و ویژگی‌های سطح بالا (High-level semantic features) استخراج می‌شوند.
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Multimodal Projector (MLP / Cross-Attention) -->
+    <div class="tech-item">
+      <div class="tech-header">
+        <span class="tech-title">۳. تطبیق‌دهنده فضایی چندوجهی (Multimodal Projector Adapter)</span>
+        <span class="tech-tag">Cross-Modal Alignment</span>
+      </div>
+      <div class="dual-box">
+        <div class="desc-simple">
+          <span class="desc-title green">💡 توضیح ساده و کاربردی:</span>
+          مترجم هم‌زمان زبان تصویر به زبان متن؛ زبان انکودر دوربین با زبان مدل فکری فرق دارد. این قطعه پل بین چشم و مغز است تا توکن‌های تصویری دقیقاً طوری چیده شوند که مغز حس کند دارد متن می‌خواند!
+        </div>
+        <div class="desc-deep">
+          <span class="desc-title blue">⚙️ تحلیل تخصصی و مهندسی:</span>
+          یک شبکه دولایه تمام‌متصل (2-Layer MLP) با فعال‌ساز GELU یا لایه Cross-Attention که ابعاد بردار خروجی انکودر ویژن ($D_{vision}$) را دقیقاً به فضای نهان مدل متنی لوسیل ($D_{llm}$) مپ می‌کند؛ این کار اجازه می‌دهد توکن‌های تصویر به عنوان پیشوند پرامپت (Prefix Soft Tokens) درون KV-Cache تزریق شوند.
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Video Keyframe Sampling & Dynamic Resolution -->
+    <div class="tech-item">
+      <div class="tech-header">
+        <span class="tech-title">۴. نمونه‌برداری پویای فریم‌ها و وضوح متغیر (Adaptive Keyframing)</span>
+        <span class="tech-tag">Real-Time Video Throttling</span>
+      </div>
+      <div class="dual-box">
+        <div class="desc-simple">
+          <span class="desc-title green">💡 توضیح ساده و کاربردی:</span>
+          دوربین ۳۰ بار در ثانیه عکس می‌گیرد، ولی اگر اتاق تغییری نکرده باشد، نیازی نیست ۳۰ بار کارت گرافیک را آتش بزنیم! سیستم فقط وقتی حرکت جدیدی ببیند فریم تازه را برای پردازش ارسال می‌کند.
+        </div>
+        <div class="desc-deep">
+          <span class="desc-title blue">⚙️ تحلیل تخصصی و مهندسی:</span>
+          محاسبه تفاوت ساختاری فریم‌ها (SSIM یا Histogram Delta) روی بافر استریم در لایه Rust. در صورت عبور از آستانه تغییر، فریم به صف پردازش فرستاده می‌شود. همچنین با تکنیک AnyRes، تصاویر پرجزئیات به جای کشیده شدن، به شبکه‌ای از پچ‌های با وضوح اصلی خرد می‌شوند تا متن‌های داخل تصویر (OCR) تار نشوند.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- جدول مقایسه تصمیمات معماری -->
+  <div class="card" style="margin-bottom: 2rem;">
+    <h3>تحلیل چرایی انتخاب تکنولوژی‌ها در برابر گزینه‌های دیگر (Trade-offs)</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>لایه پردازش ویژن</th>
+          <th>تکنولوژی منتخب</th>
+          <th>گزینه رد شده</th>
+          <th>علت رد کردن گزینه جایگزین (RATIONALE)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>معماری انکودر بصری</strong></td>
+          <td><strong>Vision Transformer (ViT)</strong></td>
+          <td>شبکه‌های کانولوشنی (CNN / ResNet)</td>
+          <td>مدل‌های CNN دید محلی دارند و روابط سرتاسری بین اشیای دور از هم در کادر تصویر را به خوبی درک نمی‌کنند؛ ViT به صورت طبیعی با لایه‌های Attention مدل متنی لوسیل همخوانی دارد.</td>
+        </tr>
+        <tr>
+          <td><strong>تطبیق ابعاد چندوجهی</strong></td>
+          <td><strong>2-Layer MLP Projector</strong></td>
+          <td>Linear Projection تک‌لایه‌ای</td>
+          <td>تصویرسازی تک‌لایه‌ای ساده توانایی بازنمایی غیرخطی مفاهیم بصری در فضای زبانی را ندارد و باعث افت شدید درک منطقی تصویر (Visual Reasoning) می‌شود.</td>
+        </tr>
+        <tr>
+          <td><strong>استخراج فریم از استریم</strong></td>
+          <td><strong>Rust FFmpeg Native Bindings</strong></td>
+          <td>OpenCV Python bindings</td>
+          <td>ماژول پایتونی OpenCV برای هر فریم تبدیل داده به NumPy Array انجام می‌دهد و کپی‌های اضافه در رم ایجاد می‌کند، اما FFI در راست مستقیماً بافر سخت‌افزاری NVDEC کارت گرافیک را می‌خواند.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid">
+    <div class="card pros">
+      <h3 style="color: var(--primary); border-color: var(--primary);">مزایای فنی و ارزش نوآورانه</h3>
+      <ul>
+        <li><strong>استفاده از کرنل‌های Fused Attention موجود:</strong> لایه‌های ViT مستقیماً از کرنل‌های بهینه‌سازی‌شده FlashAttention در `src/gpu/kernels` پروژه استفاده می‌کنند و نیاز به کتابخانه مجزا ندارند.</li>
+        <li><strong>درک متون داخل تصاویر (OCR بومی):</strong> به لطف حفظ وضوح بالا با تکنیک پچینگ شبکه‌ای، مدل می‌تواند فاکتورها، نمودارها و صفحات کد را بدون نیاز به ماژول OCR مجزا بخواند.</li>
+        <li><strong>استفاده از حافظه پین‌شده:</strong> فریم‌های ویدیویی وب‌کم بدون وقفه از کنترلر دوربین وارد Pinned Memory شده و مستقیم با DMA به GPU می‌رسند.</li>
+      </ul>
+    </div>
+
+    <div class="card cons">
+      <h3 style="color: var(--accent); border-color: var(--accent);">چالش‌های پیاده‌سازی و گلوگاه‌ها</h3>
+      <ul>
+        <li><strong>انفجار تعداد توکن‌ها (Context Window Bloat):</strong> یک تصویر کوچک با پچ‌های $14 \times 14$ بیش از ۵۰۰ توکن تولید می‌کند که سرعت تولید متن را تحت فشار می‌گذارد.</li>
+        <li><strong>مصرف بالای VRAM در ویدیو:</strong> استریم پیوسته ویدیو با نرخ فریم بالا نیازمند بافر متحرک و مکانیزم پاک‌سازی KV-Cache فریم‌های قدیمی است.</li>
+        <li><strong>تأخیر دیکودینگ سخت‌افزاری:</strong> نیاز به راه‌اندازی و کانفیگ دقیق درایورهای NVDEC روی سرورهای ابری جهت عدم استفاده از CPU برای آنپک کردن ویدیوهای H.264/H.265.</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    const ctx = document.getElementById('visionMetricsChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['224x224 (پایین)', '336x336 (استاندارد)', '448x448 (بالا)', 'HD 720p (پچینگ کامل)'],
+        datasets: [
+          {
+            label: 'نرخ پردازش فریم بر ثانیه (FPS) - بالاتر بهتر است',
+            data: [60, 38, 22, 11],
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            yAxisID: 'y',
+            tension: 0.3,
+            fill: true
+          },
+          {
+            label: 'مصرف حافظه گرافیکی VRAM (گیگابایت) - کمتر بهتر است',
+            data: [1.2, 2.1, 3.8, 6.4],
+            borderColor: '#f43f5e',
+            backgroundColor: 'transparent',
+            borderDash: [5, 5],
+            yAxisID: 'y1',
+            tension: 0.3
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            type: 'linear',
+            position: 'right',
+            grid: { color: '#1e293b' },
+            ticks: { color: '#10b981', font: { family: 'Vazirmatn' } },
+            title: { display: true, text: 'فریم بر ثانیه (FPS)', color: '#10b981', font: { family: 'Vazirmatn' } }
+          },
+          y1: {
+            type: 'linear',
+            position: 'left',
+            grid: { drawOnChartArea: false },
+            ticks: { color: '#f43f5e', font: { family: 'Vazirmatn' } },
+            title: { display: true, text: 'مصرف VRAM (GB)', color: '#f43f5e', font: { family: 'Vazirmatn' } }
+          },
+          x: { grid: { display: false }, ticks: { color: '#f1f5f9', font: { family: 'Vazirmatn' } } }
+        },
+        plugins: {
+          legend: { position: 'bottom', labels: { color: '#94a3b8', font: { family: 'Vazirmatn' } } }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

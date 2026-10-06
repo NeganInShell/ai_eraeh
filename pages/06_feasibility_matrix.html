@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>امکان‌سنجی سخت‌افزار و استراتژی مدل‌ها (Lucille vs Ready Models)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg: #090d16;
+      --card: #111726;
+      --border: #1e293b;
+      --primary: #38bdf8;
+      --secondary: #818cf8;
+      --accent: #f43f5e;
+      --green: #10b981;
+      --yellow: #f59e0b;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'Vazirmatn', sans-serif; padding: 2rem; margin: 0; line-height: 1.8; }
+    .header { border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+    h1 { font-size: 2rem; color: #fff; margin-bottom: 0.5rem; }
+    .badge { background: rgba(56, 189, 248, 0.15); color: var(--primary); padding: 0.3rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: bold; border: 1px solid rgba(56, 189, 248, 0.3); }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+    .card h3 { color: var(--primary); font-size: 1.2rem; margin-bottom: 1rem; border-right: 3px solid var(--primary); padding-right: 0.6rem; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    th, td { padding: 0.8rem; border-bottom: 1px solid var(--border); text-align: right; font-size: 0.9rem; }
+    th { color: var(--muted); background: rgba(255,255,255,0.02); }
+    .chart-box { height: 280px; position: relative; }
+    .highlight-box {
+      background: rgba(30, 41, 59, 0.5);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-top: 1rem;
+      border: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+    .tag { padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: bold; }
+    .tag-lucille { background: rgba(56, 189, 248, 0.2); color: var(--primary); }
+    .tag-ready { background: rgba(245, 158, 11, 0.2); color: var(--yellow); }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <span class="badge">تحلیل واقع‌بینانه مهندسی و مالی</span>
+    <h1>ماتریس امکان‌سنجی: توسعه با Lucille در برابر مدل‌های آماده (Off-the-Shelf)</h1>
+    <p style="color: var(--muted);">بررسی دقیق منابع سخت‌افزاری، VRAM مورد نیاز، هزینه‌های آموزش Pre-train و SFT، و ارائه مسیر جایگزین با مدل‌های آماده بهینه‌شده برای مدیریت ریسک.</p>
+  </div>
+
+  <!-- دو سناریوی کلیدی: از صفر تا صد یا استفاده از مدل‌های آماده -->
+  <div class="grid">
+    <div class="card">
+      <h3>مسیر ۱: آموزش از پایه با Lucille Engine (From Scratch)</h3>
+      <p style="color: var(--muted); font-size: 0.9rem;">
+        در این مسیر، تمام وزن‌ها تصادفی مقداردهی اولیه می‌شوند و با استفاده از پایپ‌لاین <code style="color: var(--primary);">train.rs</code> و کرنل‌های بومی آموزش می‌بینند:
+      </p>
+      <ul style="padding-right: 1.2rem; color: var(--muted); font-size: 0.88rem;">
+        <li><strong style="color: #fff;">پیش‌آموزش (Pre-training):</strong> حداقل ۱۰۰ تا ۵۰۰ میلیارد توکن متنی برای درک دستور زبان، نحو و منطق عمومی.</li>
+        <li><strong style="color: #fff;">تنظیم دقیق نظارت‌شده (SFT):</strong> استفاده از <code style="color: var(--primary);">train_sft.rs</code> برای تبدیل مدل به دستیار پیرو دستورات کاربر (Instruction-Following).</li>
+        <li><strong style="color: #fff;">نیازمندی سخت‌افزاری آموزش:</strong> حداقل کلاستر ۸ تایی از کارتهای NVIDIA A100/H100 (80GB) به مدت ۳ تا ۶ هفته.</li>
+        <li><strong style="color: #fff;">مزیت:</strong> کنترل ۱۰۰٪ بر ساختار ماتریس‌ها، معماری اختصاصی فارسی، بدون حق لایسنس خارجی.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>مسیر ۲: استفاده از مدل‌های آماده و سبک (Off-the-Shelf Models)</h3>
+      <p style="color: var(--muted); font-size: 0.9rem;">
+        استفاده از مدل‌های متن‌باز بهینه‌شده و کوانتایز شده (GGUF / AWQ) و تمرکز انجین لوسیل بر روی استنتاج بلادرنگ:
+      </p>
+      <ul style="padding-right: 1.2rem; color: var(--muted); font-size: 0.88rem;">
+        <li><strong style="color: #fff;">متن (LLM):</strong> مدل‌های بهینه‌شده ۳ تا ۸ میلیارد پارامتری (مثل Llama-3-8B-Instruct یا Qwen-2.5-7B) با کوانتایز ۴ بیتی.</li>
+        <li><strong style="color: #fff;">صوت (Audio):</strong> موتور Whisper-Small / Faster-Whisper برای STT و Piper-TTS / VITS برای تولید گفتار روان.</li>
+        <li><strong style="color: #fff;">تصویر (Vision):</strong> مدل SigLIP یا CLIP-ViT-B/16 برای استخراج بردار ویژگی تصویر.</li>
+        <li><strong style="color: #fff;">مزیت:</strong> امکان اجرا و استنتاج حتی روی یک کارت گرافیک رده معمولی لپ‌تاپ یا سرور با ۱۶ الی ۲۴ گیگابایت VRAM.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- مقایسه سخت‌افزار مورد نیاز -->
+  <div class="card" style="margin-bottom: 2rem;">
+    <h3>تحلیل VRAM و حداقل سخت‌افزار لازم برای سرویس‌دهی مالتی‌مودال هم‌زمان</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>ماژول پردازشی</th>
+          <th>مدل پیشنهادی (آماده)</th>
+          <th>فرمت وزن‌ها</th>
+          <th>حداقل VRAM (اینفرنس)</th>
+          <th>سخت‌افزار پیشنهادی حداقل</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>مغز متنی (LLM Brain)</strong></td>
+          <td>Qwen-2.5-7B-Instruct یا Llama-3-8B</td>
+          <td>GGUF / Q4_K_M</td>
+          <td>~ ۵.۵ گیگابایت</td>
+          <td rowspan="4" style="vertical-align: middle; background: rgba(56, 189, 248, 0.05); border-right: 2px solid var(--primary); text-align: center;">
+            <strong>کارت گرافیک تک RTX 3090 یا RTX 4090</strong><br>
+            <span style="color: var(--green); font-weight: bold;">(۲۴ گیگابایت VRAM)</span><br>
+            <small style="color: var(--muted);">یا سرور ابری A10G (24GB) با هزینه اقتصادی</small>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>شنیداری (STT)</strong></td>
+          <td>Faster-Whisper Small / Medium</td>
+          <td>FP16 / INT8</td>
+          <td>~ ۱.۵ گیگابایت</td>
+        </tr>
+        <tr>
+          <td><strong>سنتز صدا (TTS)</strong></td>
+          <td>VITS / Piper (مدل اختصاصی فارسی)</td>
+          <td>ONNX / FP16</td>
+          <td>~ ۱.۰ گیگابایت</td>
+        </tr>
+        <tr>
+          <td><strong>بینایی (Vision ViT)</strong></td>
+          <td>CLIP-ViT-Base-Patch16</td>
+          <td>FP16</td>
+          <td>~ ۱.۸ گیگابایت</td>
+        </tr>
+        <tr>
+          <td><strong>فضای بافر استریم و KV-Cache</strong></td>
+          <td>سشن‌های ریل‌تایم کاربران هم‌زمان</td>
+          <td>Dynamic Paged Cache</td>
+          <td>~ ۴.۰ گیگابایت</td>
+          <td style="color: var(--yellow);">تضمین پایداری برای ۲۰ الی ۵۰ مکالمه هم‌زمان</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="highlight-box">
+      <strong style="color: var(--green);">💡 نتیجه جمع‌بندی سخت‌افزار:</strong> برای اجرای کل دستیار صوتی-تصویری-متنی به صورت یکپارچه، نیازی به کلاسترهای چند صدمیلیونی نیست! کل سیستم روی <strong>یک کارت گرافیک ۲۴ گیگابایتی (مثل RTX 3090 / 4090)</strong> با مصرف حدود ۱۴ الی ۱۵ گیگابایت VRAM به نرمی ران می‌شود و ۹ گیگابایت فضای خالی برای بافر و جهش‌های ترافیک باقی می‌ماند.
+    </div>
+  </div>
+
+  <!-- مقایسه هزینه و ریسک با نمودار -->
+  <div class="grid">
+    <div class="card">
+      <h3>مقایسه شاخص‌های کلیدی: آموزش از صفر vs مدل آماده</h3>
+      <div class="chart-box">
+        <canvas id="comparisonChart"></canvas>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>استراتژی راهبردی پیشنهادی (Hybrid Pragmatic Strategy)</h3>
+      <div style="font-size: 0.92rem; color: var(--muted); margin-top: 0.5rem;">
+        برای برنده شدن قطعی در دفاعیه و حفظ بودجه شرکت، این استراتژی دومرحله‌ای پیشنهاد می‌شود:
+        <br><br>
+        <strong style="color: #fff;">۱. برای تحویل محصول تجاری (Phase 1):</strong> استفاده از مدل‌های بهینه‌شده آماده روی پایپ‌لاین فوق‌سریع لوسیل (استفاده از حافظه Pinned Memory و WebRTC Engine بومی شما در Rust برای ارکستریشن و اینفرنس).
+        <br><br>
+        <strong style="color: #fff;">۲. برای دفاع دانش‌بنیان (Phase 2):</strong> نشان دادن معماری <code style="color: var(--primary);">src/training</code> و کرنل‌های CUDA اختصاصی پروژه برای اثبات مالکیت فنی، و اجرای یک تست آموزش SFT مقیاس کوچک بومی روی یک دامنه تخصصی (مثلاً پزشکی یا حقوقی).
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const ctx = document.getElementById('comparisonChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'radar',
+      data: {
+        labels: ['سرعت استقرار', 'صرفه‌جویی بودجه', 'امتیاز مالکیت فکری', 'کیفیت درک عمومی', 'انعطاف در سخت‌افزار مصرفی'],
+        datasets: [
+          {
+            label: 'مدل‌های بهینه‌شده آماده (Off-the-shelf)',
+            data: [95, 90, 55, 92, 90],
+            borderColor: '#f59e0b',
+            backgroundColor: 'rgba(245, 158, 11, 0.2)',
+            borderWidth: 2
+          },
+          {
+            label: 'آموزش کامل از صفر با Lucille',
+            data: [25, 20, 98, 70, 40],
+            borderColor: '#38bdf8',
+            backgroundColor: 'rgba(56, 189, 248, 0.2)',
+            borderWidth: 2
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          r: {
+            angleLines: { color: '#1e293b' },
+            grid: { color: '#1e293b' },
+            pointLabels: { color: '#94a3b8', font: { family: 'Vazirmatn', size: 10 } },
+            ticks: { display: false, max: 100 }
+          }
+        },
+        plugins: {
+          legend: { position: 'bottom', labels: { color: '#94a3b8', font: { family: 'Vazirmatn' } } }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
