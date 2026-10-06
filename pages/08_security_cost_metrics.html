@@ -79,6 +79,9 @@
     .desc-title.green { color: var(--green); }
     .desc-title.blue { color: var(--primary); }
   </style>
+
+  <!-- لایه ریسپانسیو مشترک صفحات محتوایی (موبایل، تبلت و چاپ) -->
+  <link rel="stylesheet" href="../assets/responsive.css">
 </head>
 <body>
 
@@ -92,7 +95,7 @@
   <div class="card" style="margin-bottom: 2rem;">
     <h3>۱. امنیت، کنترل حریم خصوصی و تاب‌آوری سیستم</h3>
 
-    <!-- 1. Zero Retention -->
+    <!-- ۱. عدم نگهداری داده -->
     <div class="tech-item">
       <div class="tech-header">
         <span class="tech-title">سیاست عدم نگه‌داری بافرها (Ephemeral Streaming & Zero Data Retention)</span>
@@ -110,7 +113,7 @@
       </div>
     </div>
 
-    <!-- 2. Multi-Tenancy Isolation -->
+    <!-- ۲. جداسازی چندمستاجری -->
     <div class="tech-item">
       <div class="tech-header">
         <span class="tech-title">جداسازی کامل داده‌های سازمانی (Multi-Tenancy Isolation in Qdrant)</span>
@@ -128,7 +131,7 @@
       </div>
     </div>
 
-    <!-- 3. Guardrails & Prompt Injection -->
+    <!-- ۳. حفاظ‌های ایمنی و تزریق دستور -->
     <div class="tech-item">
       <div class="tech-header">
         <span class="tech-title">فیلترهای گاردریل و مقابله با جیل‌بریک (Input/Output Safety Rails)</span>
@@ -265,5 +268,7 @@
       }
     });
   </script>
+  <!-- ابزار اندازه‌گیری ارتفاع واقعی محتوا برای چاپ بدون بریدگی -->
+  <script src="../assets/print-helper.js"></script>
 </body>
 </html>

@@ -90,6 +90,9 @@
     .desc-title.green { color: var(--green); }
     .desc-title.red { color: var(--primary); }
   </style>
+
+  <!-- لایه ریسپانسیو مشترک صفحات محتوایی (موبایل، تبلت و چاپ) -->
+  <link rel="stylesheet" href="../assets/responsive.css">
 </head>
 <body>
 
@@ -125,7 +128,7 @@
   <div class="card" style="margin-bottom: 2rem;">
     <h3>کالبدشکافی تکنولوژی‌های کلیدی (تحلیل دو سطحی: مفهومی + مهندسی عمیق)</h3>
 
-    <!-- 1. Qdrant Vector DB -->
+    <!-- ۱. پایگاه داده برداری Qdrant -->
     <div class="tech-item">
       <div class="tech-header">
         <span class="tech-title">۱. پایگاه داده برداری Qdrant</span>
@@ -143,7 +146,7 @@
       </div>
     </div>
 
-    <!-- 2. BM25 Sparse Search -->
+    <!-- ۲. جست‌وجوی تنک با الگوریتم BM25 -->
     <div class="tech-item">
       <div class="tech-header">
         <span class="tech-title">۲. موتور جستجوی کلمات کلیدی BM25</span>
@@ -161,7 +164,7 @@
       </div>
     </div>
 
-    <!-- 3. Cross-Encoder Reranker -->
+    <!-- ۳. رتبه‌بندی مجدد با مدل دوسری‌کدگذار -->
     <div class="tech-item">
       <div class="tech-header">
         <span class="tech-title">۳. مدل بازتنظیم رتبه (Cross-Encoder Re-ranker)</span>
@@ -179,7 +182,7 @@
       </div>
     </div>
 
-    <!-- 4. Semantic Chunking Strategy -->
+    <!-- ۴. راهبرد قطعه‌بندی معنایی -->
     <div class="tech-item">
       <div class="tech-header">
         <span class="tech-title">۴. چانک‌بندی هوشمند مبتنی بر ساختار سند (Semantic Chunking)</span>
@@ -294,5 +297,7 @@
       }
     });
   </script>
+  <!-- ابزار اندازه‌گیری ارتفاع واقعی محتوا برای چاپ بدون بریدگی -->
+  <script src="../assets/print-helper.js"></script>
 </body>
 </html>

@@ -2,7 +2,8 @@
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#090d16">
   <title>LucilleAI | داشبورد جامع معماری و دفاعیه مهندسی</title>
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&display=swap" rel="stylesheet">
   <style>
@@ -13,139 +14,250 @@
       --primary: #38bdf8;
       --text: #f1f5f9;
       --muted: #94a3b8;
+      --ease: cubic-bezier(0.4, 0, 0.2, 1);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', sans-serif; }
-    body { background: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      overscroll-behavior: none;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-    /* سایدبار کشویی */
+    /* ================= سایدبار کشویی ================= */
     .sidebar {
       width: 320px;
-      background: var(--sidebar);
+      background:
+        linear-gradient(180deg, rgba(56, 189, 248, 0.07), rgba(13, 19, 34, 0) 240px),
+        var(--sidebar);
       border-left: 1px solid var(--border);
+      box-shadow: -14px 0 38px rgba(2, 6, 23, 0.5);
       display: flex;
       flex-direction: column;
       flex-shrink: 0;
-      transition: width 0.25s ease, margin-right 0.25s ease;
-      z-index: 10;
+      overflow: hidden;
+      transition: width 0.28s var(--ease), transform 0.3s var(--ease);
+      z-index: 30;
     }
+    /* حالت جمع‌شده در نمایشگرهای بزرگ */
     .sidebar.collapsed {
       width: 0;
       margin-right: -1px;
-      overflow: hidden;
       border-left: none;
     }
 
+    /* ================= سربرگ سایدبار ================= */
     .brand {
-      padding: 1.2rem 1.5rem;
+      padding: 1.1rem 1.25rem;
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       gap: 0.8rem;
       white-space: nowrap;
+      flex-shrink: 0;
     }
     .brand-logo {
-      width: 36px;
-      height: 36px;
+      width: 38px;
+      height: 38px;
       background: linear-gradient(135deg, #38bdf8, #818cf8);
-      border-radius: 8px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 900;
+      font-size: 1.1rem;
       color: #090d16;
       flex-shrink: 0;
+      box-shadow: 0 6px 18px rgba(56, 189, 248, 0.28);
     }
-    .brand-text h2 { font-size: 1.1rem; color: #fff; }
-    .brand-text p { font-size: 0.75rem; color: var(--muted); }
+    .brand-text { min-width: 0; }
+    .brand-text h2 { font-size: 1.08rem; color: #fff; line-height: 1.6; }
+    .brand-text p { font-size: 0.73rem; color: var(--muted); line-height: 1.7; }
+    .brand-text p span { display: block; overflow: hidden; text-overflow: ellipsis; }
 
+    /* دکمه بستن کشو (فقط روی موبایل دیده می‌شود) */
+    .sidebar-close {
+      display: none;
+      margin-inline-start: auto;
+      width: 36px;
+      height: 36px;
+      flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s var(--ease);
+    }
+    .sidebar-close:hover { background: rgba(244, 63, 94, 0.15); border-color: rgba(244, 63, 94, 0.5); color: #fda4af; }
+
+    /* ================= فهرست صفحات ================= */
     .nav-list {
       list-style: none;
-      padding: 1rem;
+      padding: 1rem 0.85rem;
       overflow-y: auto;
+      overscroll-behavior: contain;
       flex-grow: 1;
       display: flex;
       flex-direction: column;
       gap: 0.4rem;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(56, 189, 248, 0.35) transparent;
     }
+    .nav-list::-webkit-scrollbar { width: 5px; }
+    .nav-list::-webkit-scrollbar-track { background: transparent; }
+    .nav-list::-webkit-scrollbar-thumb { background: rgba(56, 189, 248, 0.3); border-radius: 99px; }
+
     .nav-item {
-      padding: 0.75rem 1rem;
-      border-radius: 8px;
+      position: relative;
+      padding: 0.75rem 0.9rem;
+      border-radius: 10px;
       cursor: pointer;
       font-size: 0.88rem;
       color: var(--muted);
       display: flex;
       align-items: center;
-      gap: 0.8rem;
-      transition: all 0.2s ease;
+      gap: 0.7rem;
+      transition: background 0.2s var(--ease), color 0.2s var(--ease), border-color 0.2s var(--ease), transform 0.2s var(--ease);
       border: 1px solid transparent;
       white-space: nowrap;
+      user-select: none;
+      -webkit-user-select: none;
     }
-    .nav-item:hover { background: rgba(255, 255, 255, 0.03); color: #fff; }
+    /* نشانگر عمودی کنار آیتم فعال */
+    .nav-item::before {
+      content: '';
+      position: absolute;
+      inset-inline-start: 0;
+      top: 50%;
+      width: 3px;
+      height: 0;
+      border-radius: 99px;
+      background: var(--primary);
+      transform: translateY(-50%);
+      transition: height 0.25s var(--ease);
+    }
+    .nav-item > span:first-child { font-size: 1.05rem; line-height: 1; flex-shrink: 0; }
+    .nav-item > span:last-child { overflow: hidden; text-overflow: ellipsis; }
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: #fff;
+      transform: translateX(-4px);
+    }
+    .nav-item:focus-visible {
+      outline: 2px solid rgba(56, 189, 248, 0.6);
+      outline-offset: 2px;
+    }
     .nav-item.active {
       background: rgba(56, 189, 248, 0.12);
       color: var(--primary);
       border-color: rgba(56, 189, 248, 0.3);
       font-weight: 700;
     }
+    .nav-item.active::before { height: 60%; }
 
-    /* نمای اصلی */
+    /* ================= پرده تیره پشت کشوی موبایل ================= */
+    .backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.65);
+      backdrop-filter: blur(3px);
+      -webkit-backdrop-filter: blur(3px);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.28s var(--ease), visibility 0.28s var(--ease);
+      z-index: 25;
+    }
+    .backdrop.visible { opacity: 1; visibility: visible; }
+
+    /* ================= نمای اصلی ================= */
     .main-view {
       flex-grow: 1;
       display: flex;
       flex-direction: column;
       height: 100vh;
-      background: var(--bg);
+      height: 100dvh;
       min-width: 0;
+      min-height: 0;
+      background: var(--bg);
     }
     .top-bar {
-      height: 55px;
+      min-height: 56px;
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 1.2rem;
-      background: rgba(13, 19, 34, 0.5);
+      gap: 0.7rem;
+      padding: 0.45rem 1.1rem;
+      padding-top: calc(0.45rem + env(safe-area-inset-top));
+      background: rgba(13, 19, 34, 0.6);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       flex-shrink: 0;
     }
-    .left-tools { display: flex; align-items: center; gap: 0.8rem; }
+    .left-tools { display: flex; align-items: center; gap: 0.7rem; min-width: 0; }
+    .current-title {
+      font-size: 0.9rem;
+      color: var(--muted);
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
     .toggle-btn {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--border);
       color: var(--text);
-      width: 34px;
-      height: 34px;
-      border-radius: 6px;
+      width: 36px;
+      height: 36px;
+      flex-shrink: 0;
+      border-radius: 8px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
+      transition: all 0.2s var(--ease);
     }
     .toggle-btn:hover { background: rgba(56, 189, 248, 0.15); border-color: var(--primary); color: var(--primary); }
+    .toggle-btn:focus-visible { outline: 2px solid rgba(56, 189, 248, 0.6); outline-offset: 2px; }
+    .icon-close { display: none; }
 
-    .action-group { display: flex; gap: 0.6rem; align-items: center; }
+    .action-group { display: flex; gap: 0.6rem; align-items: center; flex-shrink: 0; }
     .btn-action {
       background: transparent;
       border: 1px solid var(--border);
       color: var(--muted);
-      padding: 0.35rem 0.85rem;
-      border-radius: 6px;
+      padding: 0.4rem 0.85rem;
+      border-radius: 8px;
       cursor: pointer;
       font-size: 0.82rem;
       font-family: inherit;
       display: flex;
       align-items: center;
       gap: 0.4rem;
+      white-space: nowrap;
+      transition: all 0.2s var(--ease);
     }
     .btn-action:hover { color: #fff; border-color: var(--primary); background: rgba(56, 189, 248, 0.08); }
+    .btn-action:focus-visible { outline: 2px solid rgba(56, 189, 248, 0.6); outline-offset: 2px; }
     .btn-pdf { border-color: rgba(16, 185, 129, 0.4); color: #10b981; }
     .btn-pdf:hover { background: rgba(16, 185, 129, 0.15); border-color: #10b981; color: #fff; }
+    .label-short { display: none; }
 
-    /* نگهدارنده آی‌فریم‌ها برای تعامل زنده و پرینت */
+    /* ================= نگهدارنده آی‌فریم‌ها برای تعامل زنده و پرینت ================= */
     .frames-container {
-      flex-grow: 1;
+      flex: 1 1 auto;
       position: relative;
-      height: calc(100vh - 55px);
+      min-height: 0;
       width: 100%;
     }
     .page-frame {
@@ -155,23 +267,119 @@
       position: absolute;
       top: 0;
       left: 0;
-      display: none;
-    }
-    .page-frame.visible {
       display: block;
+      background: var(--bg);
     }
 
-    /* تنظیمات ویژه برای چاپ یکپارچه تمام ۸ صفحه */
+    /* صفحات غیرفعال پنهان می‌شوند اما چیده می‌مانند تا نمودارهای داخل آن‌ها
+       اندازه درست بگیرند و در چاپ خالی نمانند. */
+    .page-frame:not(.visible) {
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .page-frame.visible { visibility: visible; }
+
+    /* قاب‌های نامرئی اندازه‌گیری: ارتفاع واقعی محتوا را در پهنای ناحیه چاپ A4 می‌سنجند */
+    .measure-frame {
+      position: fixed;
+      top: 0;
+      left: -20000px;
+      width: 190mm; /* پهنای ناحیه قابل چاپ در برگه A4 با حاشیه ۱۰ میلی‌متر */
+      height: 8000px; /* بلندتر از هر صفحه، تا اسکرول‌بار عمودی ایجاد نشود و پهنای محتوا دقیقاً با چاپ یکی باشد */
+      border: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    /* آماده‌سازی چاپ: چیدمان واقعی چاپ خارج از دید چیده می‌شود تا نمودارهای
+       صفحات پنهان نیز در اندازه چاپ بازترسیم شوند و در خروجی چاپ خالی نمانند */
+    body.preparing-print .frames-container {
+      position: absolute;
+      top: 0;
+      left: -20000px;
+      width: 190mm;
+      height: auto;
+      z-index: -1;
+    }
+    body.preparing-print .page-frame {
+      display: block;
+      position: relative;
+      top: auto;
+      left: auto;
+      width: 190mm;
+    }
+
+    /* ================= ریسپانسیو : تبلت و موبایل ================= */
+    @media (max-width: 900px) {
+      /* سایدبار به کشوی کناری تبدیل می‌شود */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: min(84vw, 330px);
+        max-width: 100%;
+        transform: translateX(100%);
+        transition: transform 0.3s var(--ease);
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+      .sidebar.open { transform: translateX(0); }
+      /* در موبایل حالت جمع‌شده دسکتاپ بی‌اثر می‌شود */
+      .sidebar.collapsed { width: min(84vw, 330px); margin-right: 0; border-left: 1px solid var(--border); }
+      .sidebar-close { display: flex; }
+
+      /* قفل اسکرول پس‌زمینه هنگام باز بودن کشو */
+      body.nav-open { overflow: hidden; }
+
+      .nav-item { min-height: 48px; padding: 0.7rem 0.9rem; }
+      .nav-item:hover { transform: none; }
+      .nav-item > span:last-child { white-space: normal; line-height: 1.7; }
+
+      /* نوار بالا */
+      .top-bar { padding: 0.5rem 0.7rem; padding-top: calc(0.5rem + env(safe-area-inset-top)); }
+      .toggle-btn { width: 42px; height: 42px; }
+      .current-title { font-size: 0.8rem; }
+      .label-long { display: none; }
+      .label-short { display: inline; }
+      .btn-action { padding: 0.5rem 0.7rem; font-size: 0.78rem; }
+      body.nav-open .icon-menu { display: none; }
+      body.nav-open .icon-close { display: inline; }
+    }
+
+    /* موبایل‌های کوچک */
+    @media (max-width: 420px) {
+      .current-title { font-size: 0.75rem; }
+      .action-group { gap: 0.4rem; }
+      .btn-action { padding: 0.5rem 0.55rem; }
+      .sidebar { width: 88vw; }
+    }
+
+    /* احترام به تنظیم کاهش حرکت کاربر */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+    }
+
+    /* ================= تنظیمات ویژه برای چاپ یکپارچه تمام ۸ صفحه ================= */
+
+    /* برگه A4 با حاشیه یکسان در تمام طرفین */
+    @page {
+      size: A4;
+      margin: 10mm;
+    }
+
     @media print {
-      body {
-        overflow: visible !important;
+      html, body {
+        margin: 0 !important;
+        padding: 0 !important;
         height: auto !important;
+        overflow: visible !important;
         display: block !important;
         background: #090d16 !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
-      .sidebar, .top-bar {
+      .sidebar, .top-bar, .backdrop, .measure-frame {
         display: none !important;
       }
       .main-view {
@@ -185,14 +393,31 @@
         position: static !important;
         display: block !important;
       }
+      /* هر صفحه از یک برگه تازه آغاز می‌شود و ارتفاع آن بر اساس
+         اندازه‌گیری واقعی محتوا تعیین می‌گردد تا چیزی بریده نشود.
+         مقدار height عمداً important ندارد تا ارتفاعی که جاوااسکریپت
+         روی هر قاب می‌گذارد، مبنای چاپ قرار گیرد. */
       .page-frame {
         display: block !important;
+        /* در چاپ باید تمام صفحات دیده شوند، حتی آن‌هایی که در نمایش پنهان‌اند */
+        visibility: visible !important;
         position: relative !important;
         width: 100% !important;
-        height: 1200px !important; /* ارتفاع متناسب با هر صفحه */
-        page-break-after: always !important;
-        break-after: page !important;
-        margin-bottom: 2rem !important;
+        height: auto;
+        /* ارتفاع واقعی از جاوااسکریپت اعمال می‌شود؛ این مقدار فقط
+           حالت پشتیبان در صورت غیرفعال بودن جاوااسکریپت است */
+        min-height: 277mm;
+        margin: 0 !important;
+        border: none !important;
+        background: #090d16 !important;
+        overflow: hidden;
+        page-break-after: always;
+        break-after: page;
+      }
+      /* صفحه آخر نباید برگه اضافی بسازد */
+      .page-frame:last-child {
+        page-break-after: auto;
+        break-after: auto;
       }
     }
   </style>
@@ -200,114 +425,282 @@
 <body>
 
   <!-- سایدبار ناوبری -->
-  <aside id="sidebar" class="sidebar">
+  <aside id="sidebar" class="sidebar" aria-label="فهرست صفحات ارائه">
     <div class="brand">
       <div class="brand-logo">L</div>
       <div class="brand-text">
         <h2>LucilleAI Engine</h2>
-        <p>داشبورد جامع دفاعیه و معماری</p>
+        <p><span>داشبورد جامع دفاعیه و معماری</span></p>
       </div>
+      <button class="sidebar-close" type="button" title="بستن منو" aria-label="بستن منو" onclick="closeSidebar()">✕</button>
     </div>
 
     <ul class="nav-list">
-      <li class="nav-item active" onclick="switchPage(0, this, '۱. معماری بومی لوسیل (Rust)')">
+      <li class="nav-item active" tabindex="0" role="button" onclick="switchPage(0, this, '۱. معماری بومی لوسیل (Rust)')">
         <span>🏛️</span>
         <span>۱. معماری بومی لوسیل (Rust)</span>
       </li>
-      <li class="nav-item" onclick="switchPage(1, this, '۲. معماری ماژولار (Microservices)')">
+      <li class="nav-item" tabindex="0" role="button" onclick="switchPage(1, this, '۲. معماری ماژولار (Microservices)')">
         <span>🧩</span>
         <span>۲. معماری ماژولار (Microservices)</span>
       </li>
-      <li class="nav-item" onclick="switchPage(2, this, '۳. معماری ترکیبی (Hybrid RAG)')">
+      <li class="nav-item" tabindex="0" role="button" onclick="switchPage(2, this, '۳. معماری ترکیبی (Hybrid RAG)')">
         <span>📚</span>
         <span>۳. معماری ترکیبی (Hybrid RAG)</span>
       </li>
-      <li class="nav-item" onclick="switchPage(3, this, '۴. خط لوله بلادرنگ صوت (Audio)')">
+      <li class="nav-item" tabindex="0" role="button" onclick="switchPage(3, this, '۴. خط لوله بلادرنگ صوت (Audio)')">
         <span>🎙️</span>
         <span>۴. خط لوله بلادرنگ صوت (Audio)</span>
       </li>
-      <li class="nav-item" onclick="switchPage(4, this, '۵. خط لوله پردازش تصویر (ViT)')">
+      <li class="nav-item" tabindex="0" role="button" onclick="switchPage(4, this, '۵. خط لوله پردازش تصویر (ViT)')">
         <span>👁️</span>
         <span>۵. خط لوله پردازش تصویر (ViT)</span>
       </li>
-      <li class="nav-item" onclick="switchPage(5, this, '۶. تحلیل سخت‌افزار و مدل آماده')">
+      <li class="nav-item" tabindex="0" role="button" onclick="switchPage(5, this, '۶. تحلیل سخت‌افزار و مدل آماده')">
         <span>⚡</span>
         <span>۶. تحلیل سخت‌افزار و مدل آماده</span>
       </li>
-      <li class="nav-item" onclick="switchPage(6, this, '۷. نقشه راه و تسک‌های اجرایی')">
+      <li class="nav-item" tabindex="0" role="button" onclick="switchPage(6, this, '۷. نقشه راه و تسک‌های اجرایی')">
         <span>🎯</span>
         <span>۷. نقشه راه و تسک‌های اجرایی</span>
       </li>
-      <li class="nav-item" onclick="switchPage(7, this, '۸. امنیت، برآورد مالی و تلمتری')">
+      <li class="nav-item" tabindex="0" role="button" onclick="switchPage(7, this, '۸. امنیت، برآورد مالی و تلمتری')">
         <span>🛡️</span>
         <span>۸. امنیت، برآورد مالی و تلمتری</span>
       </li>
     </ul>
   </aside>
 
+  <!-- پرده تیره برای بستن کشوی موبایل با لمس بیرون از آن -->
+  <div id="backdrop" class="backdrop" onclick="closeSidebar()"></div>
+
   <!-- فریم اصلی نمایش محتوا -->
   <main class="main-view">
     <div class="top-bar">
       <div class="left-tools">
-        <button class="toggle-btn" title="باز و بسته کردن منو" onclick="toggleSidebar()">☰</button>
-        <span id="currentTitle" style="font-size: 0.9rem; color: var(--muted); font-weight: 600;">۱. معماری بومی لوسیل (Rust)</span>
+        <button class="toggle-btn" id="sidebarToggle" type="button" title="باز و بسته کردن منو" aria-label="باز و بسته کردن منو" aria-expanded="true" aria-controls="sidebar" onclick="toggleSidebar()">
+          <span class="icon-menu" aria-hidden="true">☰</span>
+          <span class="icon-close" aria-hidden="true">✕</span>
+        </button>
+        <span id="currentTitle" class="current-title">۱. معماری بومی لوسیل (Rust)</span>
       </div>
 
       <div class="action-group">
-        <button class="btn-action btn-pdf" onclick="window.print()">
-          <span>🖨️</span>
-          <span>چاپ کامل تمام صفحات (PDF یکپارچه)</span>
+        <button class="btn-action btn-pdf" type="button" title="چاپ کامل و یکپارچه تمام صفحات روی برگه A4" onclick="printAllPages()">
+          <span aria-hidden="true">🖨️</span>
+          <span class="label-long">چاپ کامل تمام صفحات (PDF یکپارچه)</span>
+          <span class="label-short">چاپ</span>
         </button>
-        <button class="btn-action" onclick="toggleFullScreen()">
-          <span>🖥️</span>
-          <span>تمام‌صفحه</span>
+        <button class="btn-action" id="fullScreenBtn" type="button" title="نمایش تمام‌صفحه برای ویدئو پروژکتور" onclick="toggleFullScreen()">
+          <span aria-hidden="true">🖥️</span>
+          <span class="label-long">تمام‌صفحه</span>
+          <span class="label-short">تمام‌صفحه</span>
         </button>
       </div>
     </div>
 
     <!-- تمام صفحات به صورت موازی در حافظه لود هستند تا موقع پرینت همه با هم بیایند -->
     <div class="frames-container">
-      <iframe class="page-frame visible" src="pages/01_architecture_a.html"></iframe>
-      <iframe class="page-frame" src="pages/02_architecture_b.html"></iframe>
-      <iframe class="page-frame" src="pages/03_architecture_c.html"></iframe>
-      <iframe class="page-frame" src="pages/04_audio_pipeline.html"></iframe>
-      <iframe class="page-frame" src="pages/05_vision_pipeline.html"></iframe>
-      <iframe class="page-frame" src="pages/06_feasibility_matrix.html"></iframe>
-      <iframe class="page-frame" src="pages/07_roadmap_todo.html"></iframe>
-      <iframe class="page-frame" src="pages/08_security_cost_metrics.html"></iframe>
+      <iframe class="page-frame visible" data-fallback-height="4187" title="۱. معماری بومی لوسیل" src="pages/01_architecture_a.html"></iframe>
+      <iframe class="page-frame" data-fallback-height="4187" title="۲. معماری ماژولار" src="pages/02_architecture_b.html"></iframe>
+      <iframe class="page-frame" data-fallback-height="4187" title="۳. معماری ترکیبی" src="pages/03_architecture_c.html"></iframe>
+      <iframe class="page-frame" data-fallback-height="4187" title="۴. خط لوله بلادرنگ صوت" src="pages/04_audio_pipeline.html"></iframe>
+      <iframe class="page-frame" data-fallback-height="4187" title="۵. خط لوله پردازش تصویر" src="pages/05_vision_pipeline.html"></iframe>
+      <iframe class="page-frame" data-fallback-height="3140" title="۶. تحلیل سخت‌افزار و مدل آماده" src="pages/06_feasibility_matrix.html"></iframe>
+      <iframe class="page-frame" data-fallback-height="3140" title="۷. نقشه راه و تسک‌های اجرایی" src="pages/07_roadmap_todo.html"></iframe>
+      <iframe class="page-frame" data-fallback-height="3140" title="۸. امنیت، برآورد مالی و تلمتری" src="pages/08_security_cost_metrics.html"></iframe>
     </div>
   </main>
 
   <script>
-    // تغییر باز/بسته بودن سایدبار
+    // دسترسی به عناصر اصلی رابط کاربری
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('backdrop');
+    const toggleBtn = document.getElementById('sidebarToggle');
+    const navItems = document.querySelectorAll('.nav-item');
+    const pageFrames = document.querySelectorAll('.page-frame');
+
+    // نقطه شکست نمایش کشوی موبایل (هم‌راستا با پرس‌وجوی رسانه‌ای در استایل)
+    const mobileMedia = window.matchMedia('(max-width: 900px)');
+
+    // آیا کاربر در حالت موبایل یا تبلت کوچک است؟
+    function isMobileMode() {
+      return mobileMedia.matches;
+    }
+
+    // باز و بسته کردن سایدبار (در موبایل کشوی کناری و در دسکتاپ جمع‌شونده)
     function toggleSidebar() {
-      document.getElementById('sidebar').classList.toggle('collapsed');
+      if (isMobileMode()) {
+        const willOpen = !sidebar.classList.contains('open');
+        sidebar.classList.toggle('open', willOpen);
+        backdrop.classList.toggle('visible', willOpen);
+        document.body.classList.toggle('nav-open', willOpen);
+        toggleBtn.setAttribute('aria-expanded', String(willOpen));
+      } else {
+        const willOpen = sidebar.classList.contains('collapsed');
+        sidebar.classList.toggle('collapsed', !willOpen);
+        toggleBtn.setAttribute('aria-expanded', String(willOpen));
+      }
+    }
+
+    // بستن کشوی موبایل (با دکمه بستن، لمس پرده یا کلید خروج)
+    function closeSidebar() {
+      if (!isMobileMode()) return;
+      sidebar.classList.remove('open');
+      backdrop.classList.remove('visible');
+      document.body.classList.remove('nav-open');
+      toggleBtn.setAttribute('aria-expanded', 'false');
+      toggleBtn.focus();
+    }
+
+    // همگام‌سازی وضعیت سایدبار هنگام چرخش گوشی یا تغییر اندازه پنجره
+    function syncSidebarWithViewport() {
+      sidebar.classList.remove('collapsed', 'open');
+      backdrop.classList.remove('visible');
+      document.body.classList.remove('nav-open');
+      toggleBtn.setAttribute('aria-expanded', String(!isMobileMode()));
+    }
+
+    if (typeof mobileMedia.addEventListener === 'function') {
+      mobileMedia.addEventListener('change', syncSidebarWithViewport);
+    } else {
+      mobileMedia.addListener(syncSidebarWithViewport);
     }
 
     // سوییچ بین صفحات برای نمایش زنده
     function switchPage(index, el, title) {
-      const frames = document.querySelectorAll('.page-frame');
-      frames.forEach((f, i) => {
-        if (i === index) {
-          f.classList.add('visible');
-        } else {
-          f.classList.remove('visible');
+      pageFrames.forEach((frame, i) => frame.classList.toggle('visible', i === index));
+      navItems.forEach(item => {
+        item.classList.remove('active');
+        item.removeAttribute('aria-current');
+      });
+      el.classList.add('active');
+      el.setAttribute('aria-current', 'page');
+      document.getElementById('currentTitle').textContent = title;
+      document.title = title + ' | LucilleAI';
+      // در موبایل پس از انتخاب صفحه، کشو بسته می‌شود تا محتوا دیده شود
+      closeSidebar();
+    }
+
+    // فعال‌سازی آیتم‌های منو با کیبورد (کلید اینتر یا فاصله)
+    navItems.forEach(item => {
+      item.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          item.click();
         }
       });
+    });
 
-      document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-      el.classList.add('active');
-      document.getElementById('currentTitle').innerText = title;
-    }
+    // بستن کشو با فشردن کلید خروج
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') closeSidebar();
+    });
 
     // تمام صفحه برای ویدئو پروژکتور
     function toggleFullScreen() {
       if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-      } else {
-        if (document.exitFullscreen) document.exitFullscreen();
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen();
+        }
+      } else if (document.exitFullscreen) {
+        document.exitFullscreen();
       }
     }
+
+    // ================= چاپ دقیق روی برگه A4 =================
+    // ارتفاع واقعی محتوای هر صفحه، کلید نام فایل آن
+    const measuredHeights = new Map();
+
+    function pageFileName(frame) {
+      return decodeURIComponent(frame.getAttribute('src').split('/').pop() || '');
+    }
+
+    // دریافت گزارش ارتفاع از صفحات (اندازه‌گیری انجام‌شده در پهنای ناحیه چاپ)
+    const probeTimers = new Map();
+
+    window.addEventListener('message', event => {
+      const data = event.data;
+      if (!data || data.type !== 'lucille-page-height') return;
+      if (!data.page || !data.height) return;
+      measuredHeights.set(data.page, data.height);
+
+      /* قاب اندازه‌گیری تنها پس از چند ثانیه سکوت کامل کنار گذاشته می‌شود تا
+         آخرین گزارش (مربوط به فونت و نمودارها) هم دریافت شود. */
+      clearTimeout(probeTimers.get(data.page));
+      probeTimers.set(data.page, setTimeout(() => {
+        document.querySelectorAll('.measure-frame[data-page="' + data.page + '"]').forEach(probe => probe.remove());
+      }, 5000));
+    });
+
+    // اندازه‌گیری ارتفاع واقعی همه صفحات در پهنای ناحیه قابل چاپ A4
+    function measurePagesForPrint() {
+      pageFrames.forEach(frame => {
+        const name = pageFileName(frame);
+        const probe = document.createElement('iframe');
+        probe.className = 'measure-frame';
+        probe.setAttribute('data-page', name);
+        probe.setAttribute('aria-hidden', 'true');
+        probe.setAttribute('tabindex', '-1');
+        probe.setAttribute('title', 'اندازه‌گیری چاپ');
+        probe.src = frame.getAttribute('src');
+        document.body.appendChild(probe);
+        // اگر صفحه‌ای اصلاً گزارش نداد، قاب پس از چند ثانیه پاک‌سازی می‌شود
+        setTimeout(() => probe.remove(), 20000);
+      });
+    }
+
+    // اعمال ارتفاع واقعی روی قاب‌ها فقط در لحظه چاپ
+    let printLayoutActive = false;
+
+    function applyPrintLayout() {
+      if (printLayoutActive) return;
+      printLayoutActive = true;
+      pageFrames.forEach(frame => {
+        const measured = measuredHeights.get(pageFileName(frame));
+        // در نبود اندازه‌گیری زنده، از ارتفاع پشتیبانِ ثبت‌شده در سند استفاده می‌شود
+        const fallback = parseInt(frame.getAttribute('data-fallback-height') || '0', 10);
+        // اندازه‌گیری زنده به مرز کامل برگه‌های A4 گرد شده است؛
+        // ارتفاع پشتیبان نیز در همین واحد ثبت شده است
+        const height = measured || fallback;
+        if (height) frame.style.height = height + 'px';
+      });
+      document.body.classList.add('print-layout', 'preparing-print');
+      // به صفحات فرمان می‌دهیم نمودارها را در اندازه چاپ بازترسیم کنند
+      pageFrames.forEach(frame => {
+        if (frame.contentWindow) frame.contentWindow.postMessage({ type: 'lucille-prepare-print' }, '*');
+      });
+    }
+
+    // بازگرداندن چیدمان نمایش پس از پایان چاپ
+    function revertPrintLayout() {
+      if (!printLayoutActive) return;
+      printLayoutActive = false;
+      pageFrames.forEach(frame => { frame.style.height = ''; });
+      document.body.classList.remove('print-layout', 'preparing-print');
+    }
+
+    window.addEventListener('beforeprint', applyPrintLayout);
+    window.addEventListener('afterprint', revertPrintLayout);
+
+    // خروجی نهایی چاپ: ابتدا صفحات در اندازه چاپ چیده و نمودارها بازترسیم
+    // می‌شوند، سپس با اندکی تأخیر پنجره چاپ باز می‌شود.
+    function printAllPages() {
+      applyPrintLayout();
+      setTimeout(function () { window.print(); }, 900);
+    }
+
+    // در دستگاه‌های بدون پشتیبانی تمام‌صفحه، دکمه مربوطه نمایش داده نمی‌شود
+    if (!document.documentElement.requestFullscreen) {
+      const fullScreenBtn = document.getElementById('fullScreenBtn');
+      if (fullScreenBtn) fullScreenBtn.style.display = 'none';
+    }
+
+    // وضعیت اولیه متناسب با اندازه صفحه
+    syncSidebarWithViewport();
+
+    // اندازه‌گیری ارتفاع صفحات برای چاپ بدون بریدگی
+    measurePagesForPrint();
   </script>
 </body>
 </html>

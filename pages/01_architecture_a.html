@@ -90,6 +90,9 @@
     .desc-title.green { color: var(--green); }
     .desc-title.cyan { color: var(--primary); }
   </style>
+
+  <!-- لایه ریسپانسیو مشترک صفحات محتوایی (موبایل، تبلت و چاپ) -->
+  <link rel="stylesheet" href="../assets/responsive.css">
 </head>
 <body>
 
@@ -125,7 +128,7 @@
   <div class="card" style="margin-bottom: 2rem;">
     <h3>کالبدشکافی تکنولوژی‌های کلیدی (تحلیل دو سطحی: مفهومی + مهندسی عمیق)</h3>
 
-    <!-- 1. Rust Language -->
+    <!-- ۱. زبان برنامه‌نویسی سیستمی Rust -->
     <div class="tech-item">
       <div class="tech-header">
         <span class="tech-title">۱. زبان برنامه‌نویسی سیستمی Rust</span>
@@ -143,7 +146,7 @@
       </div>
     </div>
 
-    <!-- 2. Custom CUDA Kernels -->
+    <!-- ۲. کرنل‌های اختصاصی محاسباتی CUDA -->
     <div class="tech-item">
       <div class="tech-header">
         <span class="tech-title">۲. کرنل‌های بومی محاسبات ماتریسی CUDA</span>
@@ -161,7 +164,7 @@
       </div>
     </div>
 
-    <!-- 3. Memory Arena & Pinned Host Memory -->
+    <!-- ۳. استخر حافظه و حافظه میزبان قفل‌شده -->
     <div class="tech-item">
       <div class="tech-header">
         <span class="tech-title">۳. تخصیص‌دهنده حافظه سفارشی (Memory Arena & Pinned RAM)</span>
@@ -179,7 +182,7 @@
       </div>
     </div>
 
-    <!-- 4. Persian Unigram Tokenizer -->
+    <!-- ۴. توکنایزر تک‌واژه‌ای اختصاصی فارسی -->
     <div class="tech-item">
       <div class="tech-header">
         <span class="tech-title">۴. توکنایزر اختصاصی زبان فارسی (Custom Unigram Engine)</span>
@@ -276,5 +279,7 @@
       }
     });
   </script>
+  <!-- ابزار اندازه‌گیری ارتفاع واقعی محتوا برای چاپ بدون بریدگی -->
+  <script src="../assets/print-helper.js"></script>
 </body>
 </html>

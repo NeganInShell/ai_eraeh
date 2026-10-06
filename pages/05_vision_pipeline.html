@@ -90,6 +90,9 @@
     .desc-title.green { color: var(--primary); }
     .desc-title.blue { color: var(--secondary); }
   </style>
+
+  <!-- لایه ریسپانسیو مشترک صفحات محتوایی (موبایل، تبلت و چاپ) -->
+  <link rel="stylesheet" href="../assets/responsive.css">
 </head>
 <body>
 
@@ -125,7 +128,7 @@
   <div class="card" style="margin-bottom: 2rem;">
     <h3>کالبدشکافی تکنولوژی‌های کلیدی بینایی (تحلیل دو سطحی: مفهومی + مهندسی عمیق)</h3>
 
-    <!-- 1. Patch Extraction -->
+    <!-- ۱. استخراج وصله‌های تصویر -->
     <div class="tech-item">
       <div class="tech-header">
         <span class="tech-title">۱. خرد کردن تصویر به پچ‌های فضایی (Patch Extraction & 2D Projection)</span>
@@ -143,7 +146,7 @@
       </div>
     </div>
 
-    <!-- 2. Vision Transformer (ViT) -->
+    <!-- ۲. ترنسفورمر بینایی (ViT) -->
     <div class="tech-item">
       <div class="tech-header">
         <span class="tech-title">۲. ترنسفرمر بینایی ماشین (Vision Transformer - ViT Backbone)</span>
@@ -161,7 +164,7 @@
       </div>
     </div>
 
-    <!-- 3. Multimodal Projector (MLP / Cross-Attention) -->
+    <!-- ۳. نگاشتگر چندوجهی (پرسپترون چندلایه / توجه متقاطع) -->
     <div class="tech-item">
       <div class="tech-header">
         <span class="tech-title">۳. تطبیق‌دهنده فضایی چندوجهی (Multimodal Projector Adapter)</span>
@@ -179,7 +182,7 @@
       </div>
     </div>
 
-    <!-- 4. Video Keyframe Sampling & Dynamic Resolution -->
+    <!-- ۴. نمونه‌برداری فریم کلیدی ویدیو و تفکیک پویا -->
     <div class="tech-item">
       <div class="tech-header">
         <span class="tech-title">۴. نمونه‌برداری پویای فریم‌ها و وضوح متغیر (Adaptive Keyframing)</span>
@@ -307,5 +310,7 @@
       }
     });
   </script>
+  <!-- ابزار اندازه‌گیری ارتفاع واقعی محتوا برای چاپ بدون بریدگی -->
+  <script src="../assets/print-helper.js"></script>
 </body>
 </html>

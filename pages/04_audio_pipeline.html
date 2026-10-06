@@ -91,6 +91,9 @@
     .desc-title.green { color: var(--green); }
     .desc-title.orange { color: var(--orange); }
   </style>
+
+  <!-- لایه ریسپانسیو مشترک صفحات محتوایی (موبایل، تبلت و چاپ) -->
+  <link rel="stylesheet" href="../assets/responsive.css">
 </head>
 <body>
 
@@ -126,7 +129,7 @@
   <div class="card" style="margin-bottom: 2rem;">
     <h3>کالبدشکافی تکنولوژی‌های کلیدی صوت (تحلیل دو سطحی: مفهومی + مهندسی عمیق)</h3>
 
-    <!-- 1. VAD -->
+    <!-- ۱. آشکارسازی فعالیت صوتی -->
     <div class="tech-item">
       <div class="tech-header">
         <span class="tech-title">۱. تشخیص فعالیت صوتی کاربر (Voice Activity Detection - VAD)</span>
@@ -144,7 +147,7 @@
       </div>
     </div>
 
-    <!-- 2. Log-Mel Spectrogram DSP -->
+    <!-- ۲. طیف‌نمای لگاریتمی-مِلوکال طیفی -->
     <div class="tech-item">
       <div class="tech-header">
         <span class="tech-title">۲. تبدیل سیگنال و اسپکتوگرام لاگ-مل (Log-Mel Filterbank with SIMD)</span>
@@ -162,7 +165,7 @@
       </div>
     </div>
 
-    <!-- 3. Streaming STT -->
+    <!-- ۳. تبدیل گفتار به متن بلادرنگ -->
     <div class="tech-item">
       <div class="tech-header">
         <span class="tech-title">۳. موتور تشخیص گفتار استریمینگ (Streaming STT Engine)</span>
@@ -180,7 +183,7 @@
       </div>
     </div>
 
-    <!-- 4. Low-Latency Neural TTS -->
+    <!-- ۴. تولید گفتار عصبی با کمترین تأخیر -->
     <div class="tech-item">
       <div class="tech-header">
         <span class="tech-title">۴. سنتز گفتار عصبی تکه‌تکه (Chunked Neural TTS & Vocoder)</span>
@@ -292,5 +295,7 @@
       }
     });
   </script>
+  <!-- ابزار اندازه‌گیری ارتفاع واقعی محتوا برای چاپ بدون بریدگی -->
+  <script src="../assets/print-helper.js"></script>
 </body>
 </html>

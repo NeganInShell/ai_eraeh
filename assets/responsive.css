@@ -1,0 +1,346 @@
+/* =========================================================
+   لایه ریسپانسیو مشترک صفحات محتوایی
+   هدف: نمایش شکیل، خوانا و بدون شکستگی چیدمان روی موبایل و تبلت
+   محتوای صفحات دست‌نخورده باقی مانده و فقط چیدمان و اندازه‌ها اصلاح می‌شود
+   ========================================================= */
+
+/* ---------- تبلت افقی و نمایشگرهای متوسط ---------- */
+@media (max-width: 1024px) {
+  body {
+    padding: 1.6rem 1.3rem 2.4rem;
+  }
+  h1 {
+    font-size: 1.7rem;
+  }
+  .card {
+    padding: 1.3rem;
+  }
+  .chart-box {
+    height: 250px;
+  }
+}
+
+/* ---------- موبایل و تبلت عمودی ---------- */
+@media (max-width: 768px) {
+  body {
+    padding: 1.1rem 0.85rem 2.8rem;
+    line-height: 1.95;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  /* سربرگ صفحه */
+  .header {
+    padding-bottom: 1rem;
+    margin-bottom: 1.4rem;
+  }
+  h1 {
+    font-size: 1.3rem;
+    line-height: 1.65;
+    margin-bottom: 0.4rem;
+  }
+  .header p {
+    font-size: 0.88rem !important;
+    line-height: 1.9;
+  }
+  .badge {
+    display: inline-block;
+    font-size: 0.75rem !important;
+    padding: 0.25rem 0.65rem;
+  }
+
+  /* چیدمان ستونی کارت‌ها */
+  .grid,
+  .dual-box {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+    margin-bottom: 1.4rem !important;
+  }
+  .grid:last-child,
+  .dual-box:last-child {
+    margin-bottom: 0 !important;
+  }
+
+  .card {
+    padding: 1.05rem;
+    border-radius: 10px;
+  }
+  .card h3 {
+    font-size: 1.02rem !important;
+    margin-bottom: 0.8rem;
+    padding-right: 0.55rem;
+    border-right-width: 3px;
+    line-height: 1.7;
+  }
+  .card p,
+  .card li,
+  .highlight-box {
+    font-size: 0.87rem !important;
+    line-height: 1.95;
+  }
+  ul {
+    padding-right: 1rem;
+  }
+  li {
+    margin-bottom: 0.55rem;
+  }
+
+  /* واژه‌نامه دو سطحی */
+  .tech-item {
+    padding: 0.9rem;
+    margin-bottom: 0.9rem;
+    border-radius: 9px;
+  }
+  .tech-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 0.7rem;
+  }
+  .tech-title {
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+  .tech-tag {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.55rem;
+  }
+  .desc-simple,
+  .desc-deep {
+    padding: 0.75rem;
+    font-size: 0.86rem !important;
+    border-right-width: 3px;
+  }
+  .desc-title {
+    font-size: 0.86rem;
+    margin-bottom: 0.35rem;
+  }
+
+  /* جدول‌ها با اسکرول افقی بدون شکستن ستون‌ها */
+  table {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-top: 0.8rem;
+    border-radius: 8px;
+  }
+  th,
+  td {
+    padding: 0.6rem 0.65rem;
+    font-size: 0.79rem;
+    line-height: 1.85;
+    min-width: 7rem;
+    vertical-align: top;
+  }
+  /* ستون آخر (ستون توضیحات بلند) پهن‌تر در نظر گرفته می‌شود تا متن خوانا بماند */
+  th:last-child,
+  td:last-child {
+    min-width: 12rem;
+  }
+  thead th {
+    white-space: nowrap;
+    font-size: 0.76rem;
+  }
+  table::-webkit-scrollbar {
+    height: 6px;
+  }
+  table::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 99px;
+  }
+  table::-webkit-scrollbar-thumb {
+    background: rgba(56, 189, 248, 0.45);
+    border-radius: 99px;
+  }
+
+  /* نمودارها */
+  .chart-box {
+    height: 230px;
+  }
+
+  /* برچسب‌ها و کادرهای تأکید */
+  .tag {
+    font-size: 0.72rem;
+    padding: 0.2rem 0.45rem;
+    display: inline-block;
+  }
+  .highlight-box {
+    padding: 0.85rem;
+    border-radius: 8px;
+  }
+
+  /* کدهای درون‌متنی و مسیرهای طولانی */
+  code {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+}
+
+/* ---------- صفحه ۷ : نقشه راه و تودولیست ---------- */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.7rem;
+  }
+
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.7rem;
+    margin-bottom: 1.3rem;
+  }
+  .stat-pill {
+    padding: 0.85rem 0.6rem;
+    border-radius: 9px;
+  }
+  .stat-val {
+    font-size: 1.35rem;
+  }
+  .stat-lbl {
+    font-size: 0.75rem;
+    line-height: 1.7;
+  }
+
+  .filter-bar {
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    padding: 0.7rem 0.75rem;
+    margin-bottom: 1.1rem;
+    border-radius: 9px;
+  }
+  .filter-bar > span {
+    width: 100%;
+    margin-left: 0 !important;
+    font-size: 0.8rem !important;
+  }
+  .filter-btn {
+    flex: 1 1 auto;
+    padding: 0.5rem 0.6rem;
+    font-size: 0.78rem;
+  }
+
+  .phases-container {
+    gap: 1.2rem;
+  }
+  .phase-card {
+    padding: 1rem;
+    border-radius: 10px;
+  }
+  .phase-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 0.9rem;
+  }
+  .phase-title {
+    font-size: 1rem;
+    line-height: 1.7;
+    gap: 0.45rem;
+  }
+  .phase-badge {
+    font-size: 0.7rem;
+  }
+
+  .todo-list {
+    gap: 0.65rem;
+  }
+  .todo-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.7rem;
+    padding: 0.8rem;
+  }
+  .todo-content {
+    align-items: flex-start;
+    gap: 0.7rem;
+  }
+  .todo-content span {
+    font-size: 0.87rem !important;
+    line-height: 1.9;
+  }
+  .todo-item > div:last-child {
+    flex-wrap: wrap;
+    justify-content: flex-start !important;
+    gap: 0.45rem !important;
+  }
+  .checkbox {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    margin-top: 0.25rem;
+  }
+}
+
+/* ---------- موبایل‌های کوچک ---------- */
+@media (max-width: 400px) {
+  body {
+    padding: 0.9rem 0.7rem 2.5rem;
+  }
+  h1 {
+    font-size: 1.18rem;
+  }
+  .card {
+    padding: 0.9rem;
+  }
+  .card h3 {
+    font-size: 0.98rem !important;
+  }
+  .tech-title {
+    font-size: 0.94rem;
+  }
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.55rem;
+  }
+  .stat-val {
+    font-size: 1.15rem;
+  }
+  .stat-lbl {
+    font-size: 0.7rem;
+  }
+  .chart-box {
+    height: 205px;
+  }
+  th,
+  td {
+    font-size: 0.75rem;
+    padding: 0.55rem 0.55rem;
+    min-width: 6rem;
+  }
+  th:last-child,
+  td:last-child {
+    min-width: 10.5rem;
+  }
+}
+
+/* ---------- گوشی در حالت افقی ---------- */
+@media (max-width: 900px) and (orientation: landscape) {
+  .chart-box {
+    height: 200px;
+  }
+  .stats-row {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ---------- احترام به تنظیم کاهش حرکت کاربر ---------- */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ---------- چاپ ----------
+   نکته مهم: چیدمان چاپ عمداً با چیدمان نمایش یکسان نگه داشته می‌شود تا
+   ارتفاعی که در نمایش اندازه‌گیری می‌شود با ارتفاع چاپ تفاوتی نداشته باشد.
+   تنها حفظ رنگ‌ها هنگام چاپ فعال می‌شود. */
+@media print {
+  html,
+  body {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

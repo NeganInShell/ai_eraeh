@@ -90,6 +90,9 @@
     .desc-title.green { color: var(--green); }
     .desc-title.purple { color: var(--primary); }
   </style>
+
+  <!-- لایه ریسپانسیو مشترک صفحات محتوایی (موبایل، تبلت و چاپ) -->
+  <link rel="stylesheet" href="../assets/responsive.css">
 </head>
 <body>
 
@@ -125,7 +128,7 @@
   <div class="card" style="margin-bottom: 2rem;">
     <h3>کالبدشکافی تکنولوژی‌های کلیدی (تحلیل دو سطحی: مفهومی + مهندسی عمیق)</h3>
 
-    <!-- 1. gRPC -->
+    <!-- ۱. ارتباط ریموت‌پروسیجری سریع gRPC -->
     <div class="tech-item">
       <div class="tech-header">
         <span class="tech-title">۱. پروتکل ارتباطی gRPC و Protocol Buffers</span>
@@ -143,7 +146,7 @@
       </div>
     </div>
 
-    <!-- 2. Shared Memory IPC -->
+    <!-- ۲. حافظه مشترک بین‌فرایندی -->
     <div class="tech-item">
       <div class="tech-header">
         <span class="tech-title">۲. حافظه اشتراکی سیستم‌عامل (Shared Memory IPC)</span>
@@ -161,7 +164,7 @@
       </div>
     </div>
 
-    <!-- 3. Envoy / NGINX Load Balancer -->
+    <!-- ۳. متعادل‌کننده بار Envoy / NGINX -->
     <div class="tech-item">
       <div class="tech-header">
         <span class="tech-title">۳. پروکسی معکوس و متوازن‌‌کننده بار (Envoy Proxy / NGINX)</span>
@@ -179,7 +182,7 @@
       </div>
     </div>
 
-    <!-- 4. Dynamic GPU Scheduling -->
+    <!-- ۴. زمان‌بندی پویای پردازنده گرافیکی -->
     <div class="tech-item">
       <div class="tech-header">
         <span class="tech-title">۴. زمان‌بندی و ایزولاسیون پردازنده‌های گرافیکی (GPU Isolation)</span>
@@ -286,5 +289,7 @@
       }
     });
   </script>
+  <!-- ابزار اندازه‌گیری ارتفاع واقعی محتوا برای چاپ بدون بریدگی -->
+  <script src="../assets/print-helper.js"></script>
 </body>
 </html>
